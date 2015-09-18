@@ -32,7 +32,7 @@ class ConfigHelper():
     #   a logging file has not been initialized yet.
     def verify_string_exists_prelogging(self, config_file, option_name):
         if (not(config_file.has_option(global_section_name, option_name)) or \
-                (config_file.get(global_section_name, option_name) == '')):
+                (config_file.get(global_section_name, option_name).strip() == '')):
             print(option_missing_error_message % param)
             sys.exit(1)
 
@@ -47,8 +47,8 @@ class ConfigHelper():
         self.timber.trace('Verifying option %s' % option_name)
 
         if (not(config_file.has_option(global_section_name, option_name)) or \
-                (config_file.get(global_section_name, option_name) == '')):
-            self.timber.error(option_missing_error_message % param)
+                (config_file.get(global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % param)
             sys.exit(1)
 
         self.timber.info(option_label % {param, config_file.get(global_section_name, option_name)})
@@ -62,8 +62,8 @@ class ConfigHelper():
         self.timber.trace('Verifying password %s' % option_name)
 
         if (not(config_file.has_option(global_section_name, option_name)) or \
-                (config_file.get(global_section_name, option_name) == '')):
-            self.timber.error(option_missing_error_message % param)
+                (config_file.get(global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % param)
             sys.exit(1)
 
         self.timber.info('Password %s exists.' % param)
