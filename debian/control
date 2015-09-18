@@ -1,0 +1,11 @@
+Source: confighelper
+Section: parkbench
+Priority: required
+Maintainer: eviljoel, Andrew Klapp
+#Build-Depends:
+Standards-Version: 3.9.6.1
+
+Package: confighelper
+Architecture: any
+Depends: python
+Description: Helps parse Parkbench configuration files.
