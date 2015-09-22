@@ -31,13 +31,13 @@ class ConfigHelper():
     # Verifies an option exists in the application configuration file. This method assumes
     #   a logging file has not been initialized yet.
     def verify_string_exists_prelogging(self, config_file, option_name):
-        if (not(config_file.has_option(global_section_name, option_name)) or \
-                (config_file.get(global_section_name, option_name).strip() == '')):
-            print(option_missing_error_message % param)
+        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+                (config_file.get(self.global_section_name, option_name).strip() == '')):
+            print(option_missing_error_message % option_name)
             sys.exit(1)
 
-        print(option_label % {param, config_file.get(global_section_name, option_name)})
-        return config_file.get(global_section_name, option_name).strip()
+        print(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies an option exists in the application configuration file. This method assumes
     #   a Timber instance has been created.
@@ -46,13 +46,13 @@ class ConfigHelper():
 
         self.timber.trace('Verifying option %s' % option_name)
 
-        if (not(config_file.has_option(global_section_name, option_name)) or \
-                (config_file.get(global_section_name, option_name).strip() == '')):
-            self.timber.fatal(option_missing_error_message % param)
+        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+                (config_file.get(self.global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % option_name)
             sys.exit(1)
 
-        self.timber.info(option_label % {param, config_file.get(global_section_name, option_name)})
-        return config_file.get(global_section_name, option_name).strip()
+        self.timber.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies a password exists in the application configuration file. This method does not log the
     #   value of the config parameter. This method assumes a Timber instance has been created.
@@ -61,13 +61,13 @@ class ConfigHelper():
 
         self.timber.trace('Verifying password %s' % option_name)
 
-        if (not(config_file.has_option(global_section_name, option_name)) or \
-                (config_file.get(global_section_name, option_name).strip() == '')):
-            self.timber.fatal(option_missing_error_message % param)
+        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+                (config_file.get(self.global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % option_name)
             sys.exit(1)
 
-        self.timber.info('Password %s exists.' % param)
-        return config_file.get(global_section_name, option_name).strip()
+        self.timber.info('Password %s exists.' % option_name)
+        return config_file.get(self.global_section_name, option_name).strip()
 
     # Find the existing Timber instance which should have been created by the parent process.
     def _init_timber_if_none(self):
