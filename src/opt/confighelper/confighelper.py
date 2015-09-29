@@ -33,10 +33,10 @@ class ConfigHelper():
     def verify_string_exists_prelogging(self, config_file, option_name):
         if (not(config_file.has_option(global_section_name, option_name)) or \
                 (config_file.get(global_section_name, option_name).strip() == '')):
-            print(option_missing_error_message % param)
+            print(option_missing_error_message % option_name)
             sys.exit(1)
 
-        print(option_label % {param, config_file.get(global_section_name, option_name)})
+        print(option_label % (option_name, config_file.get(global_section_name, option_name)))
         return config_file.get(global_section_name, option_name).strip()
 
     # Verifies an option exists in the application configuration file. This method assumes
@@ -48,10 +48,10 @@ class ConfigHelper():
 
         if (not(config_file.has_option(global_section_name, option_name)) or \
                 (config_file.get(global_section_name, option_name).strip() == '')):
-            self.timber.fatal(option_missing_error_message % param)
+            self.timber.fatal(option_missing_error_message % option_name)
             sys.exit(1)
 
-        self.timber.info(option_label % {param, config_file.get(global_section_name, option_name)})
+        self.timber.info(option_label % (option_name, config_file.get(global_section_name, option_name)))
         return config_file.get(global_section_name, option_name).strip()
 
     # Verifies a password exists in the application configuration file. This method does not log the
@@ -63,13 +63,85 @@ class ConfigHelper():
 
         if (not(config_file.has_option(global_section_name, option_name)) or \
                 (config_file.get(global_section_name, option_name).strip() == '')):
-            self.timber.fatal(option_missing_error_message % param)
+            self.timber.fatal(option_missing_error_message % option_name)
             sys.exit(1)
 
-        self.timber.info('Password %s exists.' % param)
+        self.timber.info('Password %s exists.' % option_name)
         return config_file.get(global_section_name, option_name).strip()
 
+    # Verifies a numeric option exists in the application configuration file. This method assumes
+    #   a Timber instance has been created.
+    def verify_number_exists(self, config_file, option_name):
+        self._init_timber_if_none()
+
+        self.timber.trace('Verifying numeric option %s' % option_name)
+
+        if (not(config_file.has_option(global_section_name, option_name)) or \
+                (config_file.get(global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % option_name)
+            sys.exit(1)
+
+        try:
+            floatValue = float(config_file.get(global_section_name, option_name).strip());
+        except Exception exception:
+            self.timber.fatal('Option %s has a value of %s but that is not a number. Quitting.' % \
+                (option_name, config_file.get(global_section_name, option_name).strip()))
+            sys.exit(1)
+
+        self.timber.info(option_label % (option_name, config_file.get(global_section_name, option_name)))
+        return floatValue
+
+    # Verifies an integer option exists in the application configuration file. This method assumes
+    #   a Timber instance has been created.
+    def verify_integer_exists(self, config_file, option_name):
+        self._init_timber_if_none()
+
+        self.timber.trace('Verifying integer option %s' % option_name)
+
+        if (not(config_file.has_option(global_section_name, option_name)) or \
+                (config_file.get(global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % option_name)
+            sys.exit(1)
+
+        try:
+            intValue = int(config_file.get(global_section_name, option_name).strip());
+        except Exception exception:
+            self.timber.fatal('Option %s has a value of %s but that is not an integer. Quitting.' % \
+                (option_name, config_file.get(global_section_name, option_name).strip()))
+            sys.exit(1)
+
+        self.timber.info(option_label % (option_name, config_file.get(global_section_name, option_name)))
+        return intValue
+
+    # Verifies an option in the application configuration file contains a comma delimited list of numbers.
+    #   This method assumes a Timber instance has been created.
+    def verify_number_list_exists(self, config_file, option_name):
+        self._init_timber_if_none()
+
+        self.timber.trace('Verifying numeric list option %s' % option_name)
+
+        if (not(config_file.has_option(global_section_name, option_name)) or \
+                (config_file.get(global_section_name, option_name).strip() == '')):
+            self.timber.fatal(option_missing_error_message % option_name)
+            sys.exit(1)
+
+        stringArray = config_file.get(global_section_name, option_name).strip().split(',')
+        floatArray = [];
+
+        for (stringValue in stringArray):
+            try:
+                floatValue = float(stringValue.strip());
+            except ValueError:
+                self.timber.fatal('Option %s has a value of %s but that is not a list of numbers. Quitting.' % \
+                    (option_name, config_file.get(global_section_name, option_name).strip()))
+                sys.exit(1)
+            floatArray.append(floatValue)
+
+        self.timber.info(option_label % (option_name, config_file.get(global_section_name, option_name)))
+        return floatArray
+    
     # Find the existing Timber instance which should have been created by the parent process.
     def _init_timber_if_none(self):
         if (self.timber is None):
             self.timber = timber.get_instance()
+
