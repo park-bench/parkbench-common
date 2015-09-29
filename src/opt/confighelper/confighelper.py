@@ -82,14 +82,14 @@ class ConfigHelper():
             sys.exit(1)
 
         try:
-            floatValue = float(config_file.get(self.global_section_name, option_name).strip());
-        except Exception exception:
+            float_value = float(config_file.get(self.global_section_name, option_name).strip());
+        except ValueError:
             self.timber.fatal('Option %s has a value of %s but that is not a number. Quitting.' % \
                 (option_name, config_file.get(self.global_section_name, option_name).strip()))
             sys.exit(1)
 
         self.timber.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
-        return floatValue
+        return float_value
 
     # Verifies an integer option exists in the application configuration file. This method assumes
     #   a Timber instance has been created.
@@ -104,14 +104,14 @@ class ConfigHelper():
             sys.exit(1)
 
         try:
-            intValue = int(config_file.get(self.global_section_name, option_name).strip());
-        except Exception exception:
+            int_value = int(config_file.get(self.global_section_name, option_name).strip());
+        except ValueError:
             self.timber.fatal('Option %s has a value of %s but that is not an integer. Quitting.' % \
                 (option_name, config_file.get(self.global_section_name, option_name).strip()))
             sys.exit(1)
 
         self.timber.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
-        return intValue
+        return int_value
 
     # Verifies an option in the application configuration file contains a comma delimited list of numbers.
     #   This method assumes a Timber instance has been created.
@@ -125,20 +125,20 @@ class ConfigHelper():
             self.timber.fatal(self.option_missing_error_message % option_name)
             sys.exit(1)
 
-        stringArray = config_file.get(self.global_section_name, option_name).strip().split(',')
-        floatArray = [];
+        string_array = config_file.get(self.global_section_name, option_name).strip().split(',')
+        float_array = [];
 
-        for (stringValue in stringArray):
+        for string_value in string_array:
             try:
-                floatValue = float(stringValue.strip());
+                float_value = float(string_value.strip());
             except ValueError:
                 self.timber.fatal('Option %s has a value of %s but that is not a list of numbers. Quitting.' % \
                     (option_name, config_file.get(self.global_section_name, option_name).strip()))
                 sys.exit(1)
-            floatArray.append(floatValue)
+            float_array.append(float_value)
 
         self.timber.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
-        return floatArray
+        return float_array
     
     # Find the existing Timber instance which should have been created by the parent process.
     def _init_timber_if_none(self):
