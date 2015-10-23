@@ -13,6 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# TODO: A lot of methods are called more thans once. Consider storing the
+#   returned value in a variable instead.
+
 import ConfigParser
 import timber
 import sys
