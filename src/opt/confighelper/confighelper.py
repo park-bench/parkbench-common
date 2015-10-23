@@ -145,6 +145,6 @@ class ConfigHelper():
     
     # Find the existing Timber instance which should have been created by the parent process.
     def _init_timber_if_none(self):
-        if (self.timber is None):
+        if (self.timber == None):
             self.timber = timber.get_instance()
 
