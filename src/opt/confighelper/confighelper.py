@@ -139,7 +139,23 @@ class ConfigHelper():
 
         self.timber.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
         return float_array
-    
+
+    # Just grab a string from the config file.  Don't verify anything, and
+    # return a None object if it doesn't exist.
+    def get_string_if_exists(self, config_file, option_name):
+        self._init_timber_if_none()
+
+        self.timber.trace('Reading option %s' % option_name)
+
+        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+                (config_file.get(self.global_section_name, option_name).strip() == '')):
+            option_text = None
+            # return a None object
+        else:
+            self.timber.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+            option_text = config_file.get(self.global_section_name, option_name).strip()
+        return option_text
+
     # Find the existing Timber instance which should have been created by the parent process.
     def _init_timber_if_none(self):
         if (self.timber == None):
