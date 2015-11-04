@@ -144,7 +144,7 @@ class ConfigHelper():
         return float_array
 
     # Just grab a string from the config file.  Don't verify anything, and
-    # return a None object if it doesn't exist.
+    #   return a None object if it is empty or doesn't exist.
     def get_string_if_exists(self, config_file, option_name):
         self._init_timber_if_none()
 
