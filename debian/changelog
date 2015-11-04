@@ -1,3 +1,9 @@
+confighelper (0.2) stable; urgency=low
+
+  * Added an optional string helper method.
+
+ -- eviljoel <eviljoel@linux.com>  Tue, 03 Sep 2015 21:56:00 -0600
+
 confighelper (0.1) stable; urgency=low
 
   * Initial version.
