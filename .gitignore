@@ -1,3 +1,10 @@
 debian/tmp
 debian/debhelper.log
 debian/files
+debian/python*
+debian/confighelper.install
+debian/substvars
+
+confighelper.egg-info/*
+
+.pybuild/*
