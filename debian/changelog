@@ -1,10 +1,16 @@
-python-confighelper (0.2) stable; urgency=low
+confighelper (0.3) stable; urgency=low
+
+  * Better Python packaging.
+
+ -- Andrew Klapp <andklapp@null.net>  Tue, 17 May 2016 20:30:00 -0500
+
+confighelper (0.2) stable; urgency=low
 
   * Added an optional string helper method.
 
- -- eviljoel <eviljoel@linux.com>  Tue, 03 Sep 2015 21:56:00 -0600
+ -- eviljoel <eviljoel@linux.com>  Tue, 03 Nov 2015 21:56:00 -0600
 
-python-confighelper (0.1) stable; urgency=low
+confighelper (0.1) stable; urgency=low
 
   * Initial version.
 

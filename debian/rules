@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-export PYBUILD_NAME=python-confighelper
+export PYBUILD_NAME=confighelper
 
 %:
 	dh $@ --with python2 --buildsystem=pybuild

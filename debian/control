@@ -1,12 +1,14 @@
-Source: python-confighelper
-Section: python
+Source: confighelper
+Section: parkbench
+Priority: required
 Maintainer: eviljoel, Andrew Klapp
+Standards-Version: 3.9.6.1
 Build-Depends: debhelper (>=9),
                dh-python,
                python-all (>=2.6.6.3),
                python-setuptools
 
-Package: python-confighelper
+Package: confighelper
 Architecture: all
 Depends: ${python::Depends}, ${misc::Depends}
 Description: Helps parse Parkbench configuration files.
