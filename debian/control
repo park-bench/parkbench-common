@@ -3,10 +3,13 @@ Section: python
 Maintainer: eviljoel, Andrew Klapp
 Build-Depends: debhelper (>=9),
                dh-python,
-               python-all (>=2.6.6.3),
+               python-all (>=2),
                python-setuptools
+
+# TODO: Have this install to /usr/local
+# TODO: Find out what misc::Depends is
 
 Package: python-confighelper
 Architecture: all
-Depends: ${python::Depends}, ${misc::Depends}
+Depends: ${python::Depends}, ${misc::Depends}, python-timber
 Description: Helps parse Parkbench configuration files.

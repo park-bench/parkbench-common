@@ -12,14 +12,43 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 # TODO: A lot of methods are called more thans once. Consider storing the
 #   returned value in a variable instead.
 
 import ConfigParser
+import logging
 import timber
 import sys
 
+# Configure the logger.
+# Add a trace method to the Logger class
+trace_level_number = 5 # debug is 10, error is 20, and so on.
+def trace(self, message, *args, **kws):
+    if self.isEnabledFor(trace_level_number):
+        self._log(trace_level_number, message, args, **kws)
+
+logging.addLevelName(trace_level_number, 'TRACE')
+logging.Logger.trace = trace
+
+def init_logger(log_level, log_file):
+    # Instantiate logger
+    logger = logging.getLogger()
+    logger.setLevel(log_leve)
+
+    # Add handlers for stdout and a log file
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    logger.addHandler(stdout_handler)
+    logger.info('Logger instantiated.')
+
+    file_handler = logging.fileHandler(log_file)
+    logger.addHandler(file_handler)
+    logger.info('Log file acquired.')
+
+    return logger
+
+
+# TODO: This should probably be rewritten eventually to use the typing methods
+#   provided in configparser and to just add methods for our specific use cases.
 class ConfigHelper():
 
     def __init__(self):
@@ -163,4 +192,3 @@ class ConfigHelper():
     def _init_timber_if_none(self):
         if (self.timber == None):
             self.timber = timber.get_instance()
-
