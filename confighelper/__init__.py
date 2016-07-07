@@ -20,32 +20,52 @@ import logging
 import timber
 import sys
 
-# Configure the logger.
-# Add a trace method to the Logger class
-trace_level_number = 5 # debug is 10, error is 20, and so on.
-def trace(self, message, *args, **kws):
-    if self.isEnabledFor(trace_level_number):
-        self._log(trace_level_number, message, args, **kws)
+def get_logger_config(log_file, log_level):
+    logger_config = { 'version': 1,
+        'formatters': {
+            'default': {
+                'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+                }
+            },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'default',
+                'stream': sys.stdout,
+                'level': log_level
+                },
+            'file': {
+                'class': 'logging.FileHandler',
+                'formatter': 'default',
+                'filename': log_file,
+                'level': log_level
+                }
+            },
+        'loggers': {
+            '': {
+                'handlers': ['file', 'console'],
+                'level': log_level
+                }
+            }
+        }
 
-logging.addLevelName(trace_level_number, 'TRACE')
-logging.Logger.trace = trace
+    return logger_config
+    
+def config_logger(log_level, log_file):
+    # Add a trace method to the Logger class
+    # TODO: The trace method does not work outside this module. Figure that out.
+    trace_level_number = 5 # debug is 10, error is 20, and so on.
+    def trace(self, message, *args, **kws):
+        if self.isEnabledFor(trace_level_number):
+            self._log(trace_level_number, message, args, **kws)
 
-def init_logger(log_level, log_file):
-    # Instantiate logger
-    logger = logging.getLogger()
-    logger.setLevel(log_leve)
+    logging.addLevelName(trace_level_number, 'TRACE')
+    logging.Logger.trace = trace
 
-    # Add handlers for stdout and a log file
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    logger.addHandler(stdout_handler)
-    logger.info('Logger instantiated.')
+    logger_config = get_logger_config(log_level, log_file)
+    logging.config.dictConfig(logging_config)
 
-    file_handler = logging.fileHandler(log_file)
-    logger.addHandler(file_handler)
-    logger.info('Log file acquired.')
-
-    return logger
-
+# TODO: Get a file handle for the log file.
 
 # TODO: This should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
