@@ -51,24 +51,26 @@ def get_logger_config(log_file, log_level):
 
     return logger_config
     
-def config_logger(log_level, log_file):
-    # Add a trace method to the Logger class
-    # TODO: The trace method does not work outside this module. Figure that out.
-    trace_level_number = 5 # debug is 10, error is 20, and so on.
-    def trace(self, message, *args, **kws):
-        if self.isEnabledFor(trace_level_number):
-            self._log(trace_level_number, message, args, **kws)
+trace_level_number = 5 # debug is 10, error is 20, and so on.
+def trace(self, message, *args, **kws):
+    if self.isEnabledFor(trace_level_number):
+        self._log(trace_level_number, message, args, **kws)
 
+def configure_logger(log_file, log_level):
+    # Add a trace method to the Logger class
     logging.addLevelName(trace_level_number, 'TRACE')
     logging.Logger.trace = trace
 
-    logger_config = get_logger_config(log_level, log_file)
+    logging_config = get_logger_config(log_file, log_level)
     logging.config.dictConfig(logging_config)
 
-# TODO: Get a file handle for the log file.
+def get_log_file_handle():
+    logger = logging.getLogger()
+    return logger.handlers[0].stream.fileno()
 
 # TODO: This should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
+# TODO: Remove references to timber.
 class ConfigHelper():
 
     def __init__(self):
