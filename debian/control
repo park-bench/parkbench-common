@@ -1,4 +1,4 @@
-Source: python-confighelper
+Source: confighelper
 Section: python
 Maintainer: eviljoel, Andrew Klapp
 Build-Depends: debhelper (>=9),
@@ -9,7 +9,7 @@ Build-Depends: debhelper (>=9),
 # TODO: Have this install to /usr/local
 # TODO: Find out what misc::Depends is
 
-Package: python-confighelper
+Package: confighelper
 Architecture: all
-Depends: ${python::Depends}, ${misc::Depends}, python-timber
+Depends: ${python::Depends}, ${misc::Depends}
 Description: Helps parse Parkbench configuration files.
