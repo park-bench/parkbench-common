@@ -1,3 +1,9 @@
+python-confighelper (0.3) UNRELEASED; urgency=low
+
+  * Added configuration for Python's logging module.
+
+ -- Andrew Klapp <andklapp@null.net>  Wed, 13 Jul 2016 21:46:18 -0500
+
 python-confighelper (0.2) stable; urgency=low
 
   * Added an optional string helper method.

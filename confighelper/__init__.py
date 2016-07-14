@@ -17,6 +17,7 @@
 
 import ConfigParser
 import logging
+import logging.config
 import timber
 import sys
 
