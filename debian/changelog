@@ -1,6 +1,7 @@
 confighelper (0.3) UNRELEASED; urgency=low
 
   * Better Python packaging.
+  * Added configuration for Python's logging module.
 
  -- Andrew Klapp <andklapp@null.net>  Tue, 17 May 2016 20:30:00 -0500
 
