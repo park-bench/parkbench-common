@@ -29,53 +29,10 @@ trace_level_number = 5 # debug is 10, error is 20, and so on.
 #   can't, let me know why.
 # TODO: All these new methods should have documentation.
 
-def get_logger_config(log_file, log_level):
-    logger_config = {
-        'version': 1,
-        'formatters': {
-            'default': {
-                'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-            }
-        },
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-                'formatter': 'default',
-                'stream': sys.stdout,
-                'level': log_level
-            },
-            'file': {
-                'class': 'logging.FileHandler',
-                'formatter': 'default',
-                'filename': log_file,
-                'level': log_level
-            }
-        },
-        'loggers': {
-            '': {
-                'handlers': ['file', 'console'],
-                'level': log_level
-            }
-        }
-    }
-
-    return logger_config
-    
-def trace(self, message, *args, **kws):
+# Trace is defined here because being in another class breaks references to self.
+def _trace(self, message, *args, **kws):
     if self.isEnabledFor(trace_level_number):
         self._log(trace_level_number, message, args, **kws)
-
-def configure_logger(log_file, log_level):
-    # Add a trace method to the Logger class
-    logging.addLevelName(trace_level_number, 'TRACE')
-    logging.Logger.trace = trace
-
-    logging_config = get_logger_config(log_file, log_level)
-    logging.config.dictConfig(logging_config)
-
-def get_log_file_handle():
-    logger = logging.getLogger()
-    return logger.handlers[0].stream.fileno()
 
 # TODO: This should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
@@ -88,7 +45,50 @@ class ConfigHelper():
         
         self.option_label = 'Option %s: %s'
         self.option_missing_error_message = 'Option %s not found. Quitting.'
+        
         self.logger = logging.getLogger()
+
+    def _get_logger_config(self, log_file, log_level):
+        logger_config = {
+            'version': 1,
+            'formatters': {
+                'default': {
+                    'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+                }
+            },
+            'handlers': {
+                'console': {
+                    'class': 'logging.StreamHandler',
+                    'formatter': 'default',
+                    'stream': sys.stdout,
+                    'level': log_level
+                },
+                'file': {
+                    'class': 'logging.FileHandler',
+                    'formatter': 'default',
+                    'filename': log_file,
+                    'level': log_level
+                }
+            },
+            'loggers': {
+                '': {
+                    'handlers': ['file', 'console'],
+                    'level': log_level
+                }
+            }
+        }
+        return logger_config
+
+    def get_log_file_handle(self):
+        return self.logger.handlers[0].stream.fileno()
+
+    def configure_logger(self, log_file, log_level):
+        # Add a trace method to the Logger class
+        logging.addLevelName(trace_level_number, 'TRACE')
+        logging.Logger.trace = _trace
+
+        logging_config = self._get_logger_config(log_file, log_level)
+        logging.config.dictConfig(logging_config)
 
     # Verifies an option exists in the application configuration file. This method assumes
     #   a logging file has not been initialized yet.
