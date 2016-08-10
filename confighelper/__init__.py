@@ -12,6 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # TODO: A lot of methods are called more thans once. Consider storing the
 #   returned value in a variable instead.
 
@@ -21,38 +22,45 @@ import logging.config
 import timber
 import sys
 
+trace_level_number = 5 # debug is 10, error is 20, and so on.
+
+
+# TODO: See if you can get all these methods to be part of the class below. If you
+#   can't, let me know why.
+# TODO: All these new methods should have documentation.
+
 def get_logger_config(log_file, log_level):
-    logger_config = { 'version': 1,
+    logger_config = {
+        'version': 1,
         'formatters': {
             'default': {
                 'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-                }
-            },
+            }
+        },
         'handlers': {
             'console': {
                 'class': 'logging.StreamHandler',
                 'formatter': 'default',
                 'stream': sys.stdout,
                 'level': log_level
-                },
+            },
             'file': {
                 'class': 'logging.FileHandler',
                 'formatter': 'default',
                 'filename': log_file,
                 'level': log_level
-                }
-            },
+            }
+        },
         'loggers': {
             '': {
                 'handlers': ['file', 'console'],
                 'level': log_level
-                }
             }
         }
+    }
 
     return logger_config
     
-trace_level_number = 5 # debug is 10, error is 20, and so on.
 def trace(self, message, *args, **kws):
     if self.isEnabledFor(trace_level_number):
         self._log(trace_level_number, message, args, **kws)

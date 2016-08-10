@@ -8,7 +8,7 @@ Build-Depends: debhelper (>=9),
                python-all (>=2),
                python-setuptools
 
-# TODO: Have this install to /usr/local
+# TODO: Have this install to /usr
 # TODO: Find out what misc::Depends is
 Package: confighelper
 Architecture: all
