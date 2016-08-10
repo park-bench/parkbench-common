@@ -25,8 +25,6 @@ import sys
 trace_level_number = 5 # debug is 10, error is 20, and so on.
 
 
-# TODO: See if you can get all these methods to be part of the class below. If you
-#   can't, let me know why.
 # TODO: All these new methods should have documentation.
 
 # Trace is defined here because being in another class breaks references to self.
@@ -48,40 +46,13 @@ class ConfigHelper():
         
         self.logger = logging.getLogger()
 
-    def _get_logger_config(self, log_file, log_level):
-        logger_config = {
-            'version': 1,
-            'formatters': {
-                'default': {
-                    'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-                }
-            },
-            'handlers': {
-                'console': {
-                    'class': 'logging.StreamHandler',
-                    'formatter': 'default',
-                    'stream': sys.stdout,
-                    'level': log_level
-                },
-                'file': {
-                    'class': 'logging.FileHandler',
-                    'formatter': 'default',
-                    'filename': log_file,
-                    'level': log_level
-                }
-            },
-            'loggers': {
-                '': {
-                    'handlers': ['file', 'console'],
-                    'level': log_level
-                }
-            }
-        }
-        return logger_config
-
+    # Returns the file handler for the log file. Mostly used for preserving file
+    #   descriptors upon daemonization.
     def get_log_file_handle(self):
         return self.logger.handlers[0].stream.fileno()
 
+    # Applies the configuration defined in _get_logger_config and adds a trace
+    #   log level. This should be run as soon as a log file and log level are known.
     def configure_logger(self, log_file, log_level):
         # Add a trace method to the Logger class
         logging.addLevelName(trace_level_number, 'TRACE')
@@ -206,3 +177,40 @@ class ConfigHelper():
             self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
             option_text = config_file.get(self.global_section_name, option_name).strip()
         return option_text
+
+    # TODO: Look into adding log rotation to our logging config.
+
+    # Returns a dict that defines the logging options we like:
+    #   The informative formatter.
+    #   A stdout handler.
+    #   A file handler.
+    def _get_logger_config(self, log_file, log_level):
+        logger_config = {
+            'version': 1,
+            'formatters': {
+                'default': {
+                    'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+                }
+            },
+            'handlers': {
+                'console': {
+                    'class': 'logging.StreamHandler',
+                    'formatter': 'default',
+                    'stream': sys.stdout,
+                    'level': log_level
+                },
+                'file': {
+                    'class': 'logging.FileHandler',
+                    'formatter': 'default',
+                    'filename': log_file,
+                    'level': log_level
+                }
+            },
+            'loggers': {
+                '': {
+                    'handlers': ['file', 'console'],
+                    'level': log_level
+                }
+            }
+        }
+        return logger_config
