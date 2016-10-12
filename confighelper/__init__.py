@@ -19,7 +19,6 @@
 import ConfigParser
 import logging
 import logging.config
-import timber
 import sys
 
 trace_level_number = 5 # debug is 10, error is 20, and so on.
@@ -54,6 +53,10 @@ class ConfigHelper():
     # Applies the configuration defined in _get_logger_config and adds a trace
     #   log level. This should be run as soon as a log file and log level are known.
     def configure_logger(self, log_file, log_level):
+        # Make it all uppercase so that the config file doesn't have to look 
+        #   like it's from the 80's.
+        log_level = log_level.upper()
+
         # Add a trace method to the Logger class
         logging.addLevelName(trace_level_number, 'TRACE')
         logging.Logger.trace = _trace
