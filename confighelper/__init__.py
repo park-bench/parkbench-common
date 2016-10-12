@@ -77,7 +77,7 @@ class ConfigHelper():
         return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies an option exists in the application configuration file. This method assumes
-    #   a Timber instance has been created.
+    #    a logger has been instantiated.
     def verify_string_exists(self, config_file, option_name):
         self.logger.trace('Verifying option %s' % option_name)
 
@@ -90,7 +90,7 @@ class ConfigHelper():
         return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies a password exists in the application configuration file. This method does not log the
-    #   value of the config parameter. This method assumes a Timber instance has been created.
+    #   value of the config parameter. This method assumes a logger has been instantiated.
     def verify_password_exists(self, config_file, option_name):
         self.logger.trace('Verifying password %s' % option_name)
 
@@ -103,7 +103,7 @@ class ConfigHelper():
         return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies a numeric option exists in the application configuration file. This method assumes
-    #   a Timber instance has been created.
+    #    a logger has been instantiated.
     def verify_number_exists(self, config_file, option_name):
         self.logger.trace('Verifying numeric option %s' % option_name)
 
@@ -123,7 +123,7 @@ class ConfigHelper():
         return float_value
 
     # Verifies an integer option exists in the application configuration file. This method assumes
-    #   a Timber instance has been created.
+    #    a logger has been instantiated.
     def verify_integer_exists(self, config_file, option_name):
         self.logger.trace('Verifying integer option %s' % option_name)
 
@@ -143,7 +143,7 @@ class ConfigHelper():
         return int_value
 
     # Verifies an option in the application configuration file contains a comma delimited list of numbers.
-    #   This method assumes a Timber instance has been created.
+    #   This method assumes a logger has been instantiated.
     def verify_number_list_exists(self, config_file, option_name):
         self.logger.trace('Verifying numeric list option %s' % option_name)
 
