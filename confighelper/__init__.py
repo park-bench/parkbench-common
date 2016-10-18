@@ -53,8 +53,8 @@ class ConfigHelper():
     # Applies the configuration defined in _get_logger_config and adds a trace
     #   log level. This should be run as soon as a log file and log level are known.
     def configure_logger(self, log_file, log_level):
-        # Make it all uppercase so that the config file doesn't have to look 
-        #   like it's from the 80's.
+        # Make it all uppercase because none of the other config file options
+        #   have to be uppercase.
         log_level = log_level.upper()
 
         # Add a trace method to the Logger class
@@ -77,7 +77,7 @@ class ConfigHelper():
         return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies an option exists in the application configuration file. This method assumes
-    #    a logger has been instantiated.
+    #   a logger has been instantiated.
     def verify_string_exists(self, config_file, option_name):
         self.logger.trace('Verifying option %s' % option_name)
 
@@ -103,7 +103,7 @@ class ConfigHelper():
         return config_file.get(self.global_section_name, option_name).strip()
 
     # Verifies a numeric option exists in the application configuration file. This method assumes
-    #    a logger has been instantiated.
+    #   a logger has been instantiated.
     def verify_number_exists(self, config_file, option_name):
         self.logger.trace('Verifying numeric option %s' % option_name)
 
@@ -123,7 +123,7 @@ class ConfigHelper():
         return float_value
 
     # Verifies an integer option exists in the application configuration file. This method assumes
-    #    a logger has been instantiated.
+    #   a logger has been instantiated.
     def verify_integer_exists(self, config_file, option_name):
         self.logger.trace('Verifying integer option %s' % option_name)
 
