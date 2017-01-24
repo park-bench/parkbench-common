@@ -18,5 +18,7 @@ installing your own package. We make the following assumptions:
 * You already know how to use GnuPG.
 * You are already somewhat familiar with using debuild.
 
-Build the package with `debuild` from the project directory and install with
-`dpkg -i`. Resolve any missing dependencies with `apt-get -f install`.
+Clone the latest *release tag*, not the `master` branch, as `master` may not be
+stable.  Build the package with `debuild` from the project directory and
+install with `dpkg -i`. Resolve any missing dependencies with `apt-get -f
+install`.
