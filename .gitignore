@@ -11,3 +11,5 @@ debian/files
 debian/python*
 debian/substvars
 debian/tmp
+.idea/
+*.iml
