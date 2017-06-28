@@ -13,3 +13,4 @@ debian/substvars
 debian/tmp
 
 *.swp
+*.pyc

@@ -1,0 +1,12 @@
+# Test config
+
+[General]
+
+very_large_int=105023450
+very_large_float=105023450.5
+
+small_int=1
+small_float=0.5
+
+negative_int=-12
+negative_float=-1.5
