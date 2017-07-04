@@ -158,16 +158,18 @@ class ConfigHelper():
 
     # Check that value is below upper_bound and above lower_bound, and raises
     #   a ValueError exception if they are not.
-    def _boundary_check(self, value, upper_bound=None, lower_bound=None):
+    def _boundary_check(self, value, upper_bound, lower_bound):
         self.logger.trace('Checking boundaries.')
 
-        if value >= upper_bound:
-            message = 'Option has a value of %s, which is above upper bound %s.' % (value, upper_bound)
-            raise ValueError(message)
+        if upper_bound is not None:
+            if value >= upper_bound:
+                message = 'Option has a value of %s, which is above upper boundary %s.' % (value, upper_bound)
+                raise ValueError(message)
 
-        if value <= lower_bound:
-            message = 'Option has a value of %s, which is below lower bound %s.' % (value, lower_bound)
-            raise ValueError(message)
+        if lower_bound is not None:
+            if value <= lower_bound:
+                message = 'Option has a value of %s, which is below lower boundary %s.' % (value, lower_bound)
+                raise ValueError(message)
 
     # Verifies an option in the application configuration file contains a comma delimited list of numbers.
     #   This method assumes a logger has been instantiated.
