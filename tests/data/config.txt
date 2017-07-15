@@ -2,11 +2,11 @@
 
 [General]
 
-very_large_int=105023450
-very_large_float=105023450.5
+int_30=30
+float_30point5=30.5
 
-small_int=1
-small_float=0.5
+int_1=1
+float_point5=0.5
 
-negative_int=-12
-negative_float=-1.5
+int_negative_12=-12
+float_negative_1point5=-1.5

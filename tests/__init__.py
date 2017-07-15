@@ -22,48 +22,48 @@ class ConfigValidationTests(unittest.TestCase):
         self.logger = logging.getLogger()
 
     def test_int_exists(self):
-        result = self.config_helper.verify_integer_exists(self.config_file, 'small_int')
-        self.assertEqual(result, 1)
+        result = self.config_helper.verify_integer_exists(self.config_file, 'int_1')
+        self.assertEqual(1, result)
 
     def test_int_is_below_lower_bound(self):
         with self.assertRaises(ValueError):
-            self.config_helper.verify_integer_within_range(self.config_file, 'negative_int', lower_bound=0)
+            self.config_helper.verify_integer_within_range(self.config_file, 'int_negative_12', lower_bound=-11)
 
     def test_int_is_above_lower_bound(self):
-        result = self.config_helper.verify_integer_within_range(self.config_file, 'very_large_int', lower_bound=20)
-        self.assertTrue(result)
+        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_30', lower_bound=31)
+        self.assertEquals(30, result)
 
     def test_int_is_above_upper_bound(self):
         with self.assertRaises(ValueError):
-            self.config_helper.verify_integer_within_range(self.config_file, 'very_large_int', upper_bound=12)
+            self.config_helper.verify_integer_within_range(self.config_file, 'int_30', upper_bound=30)
 
     def test_int_is_below_upper_bound(self):
-        result = self.config_helper.verify_integer_within_range(self.config_file, 'small_int', upper_bound=2)
-        self.assertTrue(result)
+        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_1', upper_bound=2)
+        self.assertEquals(1, result)
 
     def test_int_is_within_range(self):
-        result = self.config_helper.verify_integer_within_range(self.config_file, 'small_int', lower_bound=0, upper_bound=5)
-        self.assertTrue(result)
+        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_1', lower_bound=1, upper_bound=2)
+        self.assertEquals(1, result)
 
     def test_float_is_below_lower_bound(self):
         with self.assertRaises(ValueError):
-            self.config_helper.verify_number_within_range(self.config_file, 'negative_float', lower_bound=3.2)
+            self.config_helper.verify_number_within_range(self.config_file, 'float_negative_1point5', lower_bound=1.6)
 
     def test_float_is_abover_lower_bound(self):
-        result = self.config_helper.verify_number_within_range(self.config_file, 'very_large_float', lower_bound=1.0)
-        self.assertTrue(result)
+        result = self.config_helper.verify_number_within_range(self.config_file, 'float_30point5', lower_bound=30.5)
+        self.assertEquals(30.5, result)
 
     def test_float_is_above_upper_bound(self):
         with self.assertRaises(ValueError):
-            self.config_helper.verify_number_within_range(self.config_file, 'very_large_float', upper_bound=3.7)
+            self.config_helper.verify_number_within_range(self.config_file, 'float_30point5', upper_bound=30.5)
 
     def test_float_is_below_upper_bound(self):
-        result = self.config_helper.verify_number_within_range(self.config_file, 'small_float', upper_bound=3.3)
-        self.assertTrue(result)
+        result = self.config_helper.verify_number_within_range(self.config_file, 'float_point5', upper_bound=0.6)
+        self.assertEquals(0.5, result)
 
     def test_float_is_within_range(self):
-        result = self.config_helper.verify_number_within_range(self.config_file, 'small_float', lower_bound=-0.1, upper_bound=3.3)
-        self.assertTrue(result)
+        result = self.config_helper.verify_number_within_range(self.config_file, 'float_point5', lower_bound=-0.5, upper_bound=-0.51)
+        self.assert(0.5, result)
 
     def tearDown(self):
         # Close config file
