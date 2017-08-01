@@ -1,0 +1,12 @@
+# Test config
+
+[General]
+
+int_30=30
+float_30point5=30.5
+
+int_1=1
+float_point5=0.5
+
+int_negative_12=-12
+float_negative_1point5=-1.5

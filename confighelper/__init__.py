@@ -142,6 +142,37 @@ class ConfigHelper():
         self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
         return int_value
 
+    # Verifies a numeric option exists in the application configuration file and is below the upper
+    #   bound and above or equal to the lower bound. This method assumes a logger has been
+    #   instantiated.
+    def verify_number_within_range(self, config_file, option_name, upper_bound=None, lower_bound=None):
+        float_value = self.verify_number_exists(config_file, option_name)
+        self._boundary_check(float_value, upper_bound=upper_bound, lower_bound=lower_bound)
+        return float_value
+
+    # Verifies an integer option exists in the application configuration file and is below the upper
+    #   bound and above or equale to the lower bound. This method assumes a logger has been
+    #   instantiated.
+    def verify_integer_within_range(self, config_file, option_name, upper_bound=None, lower_bound=None):
+        int_value = self.verify_integer_exists(config_file, option_name)
+        self._boundary_check(int_value, upper_bound=upper_bound, lower_bound=lower_bound)
+        return int_value
+
+    # Check that value is below upper_bound and above lower_bound, and raises
+    #   a ValueError exception if they are not.
+    def _boundary_check(self, value, upper_bound, lower_bound):
+        self.logger.trace('Checking boundaries.')
+
+        if upper_bound is not None:
+            if value >= upper_bound:
+                message = 'Option has a value of %s, which is above upper boundary %s.' % (value, upper_bound)
+                raise ValueError(message)
+
+        if lower_bound is not None:
+            if value < lower_bound:
+                message = 'Option has a value of %s, which is below lower boundary %s.' % (value, lower_bound)
+                raise ValueError(message)
+
     # Verifies an integer option is valid given a list of acceptable options. This method assumes
     #   a logger has been instantiated.
     def verify_valid_integer_in_list(self, config_file, option_name, valid_options):
