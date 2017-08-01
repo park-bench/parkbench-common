@@ -11,6 +11,7 @@ debian/files
 debian/python*
 debian/substvars
 debian/tmp
-
 *.swp
 *.pyc
+.idea/
+*.iml

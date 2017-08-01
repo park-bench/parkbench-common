@@ -135,7 +135,7 @@ class ConfigHelper():
         try:
             int_value = int(config_file.get(self.global_section_name, option_name).strip());
         except ValueError:
-            self.logger.critical('Option %s has a value of %s but that is not an integer. Quitting.' % \
+            self.logger.critical('Option %s has a value of %s, but that is not an integer. Quitting.' % \
                 (option_name, config_file.get(self.global_section_name, option_name).strip()))
             sys.exit(1)
 
@@ -172,6 +172,18 @@ class ConfigHelper():
             if value < lower_bound:
                 message = 'Option has a value of %s, which is below lower boundary %s.' % (value, lower_bound)
                 raise ValueError(message)
+
+    # Verifies an integer option is valid given a list of acceptable options. This method assumes
+    #   a logger has been instantiated.
+    def verify_valid_integer_in_list(self, config_file, option_name, valid_options):
+        self.logger.trace('Verifying integer option %s' % option_name)
+        int_value = self.verify_integer_exists(config_file, option_name)
+
+        if int_value not in valid_options:
+            self.logger.critical('%s is not a valid value for %s. Quitting.' % (int_value, option_name))
+            sys.exit(1)
+
+        return int_value
 
     # Verifies an option in the application configuration file contains a comma delimited list of numbers.
     #   This method assumes a logger has been instantiated.
