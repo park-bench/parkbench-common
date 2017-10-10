@@ -71,9 +71,5 @@ class ConfigValidationTests(unittest.TestCase):
         result = self.config_helper.verify_number_within_range(self.config_file, 'float_point5', lower_bound=0.5, upper_bound=0.51)
         self.assertEquals(0.5, result)
 
-    def tearDown(self):
-        # Close config file
-        pass
-
 if __name__ == '__main__':
     unittest.main()
