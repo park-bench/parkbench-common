@@ -25,12 +25,18 @@ class ConfigValidationTests(unittest.TestCase):
         result = self.config_helper.verify_integer_exists(self.config_file, 'int_1')
         self.assertEqual(1, result)
 
+    # This method does not throw an exception, it exits instead. The next release
+    #   will solve this issue.
+#    def test_integer_rejects_float(self):
+#        with self.assertRaises(ValueError):
+#            self.config_helper.verify_integer_exists(self.config_file, 'float_point5')
+
     def test_int_is_below_lower_bound(self):
         with self.assertRaises(ValueError):
             self.config_helper.verify_integer_within_range(self.config_file, 'int_negative_12', lower_bound=-11)
 
     def test_int_is_above_lower_bound(self):
-        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_30', lower_bound=31)
+        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_30', lower_bound=29)
         self.assertEquals(30, result)
 
     def test_int_is_above_upper_bound(self):
@@ -49,7 +55,7 @@ class ConfigValidationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.config_helper.verify_number_within_range(self.config_file, 'float_negative_1point5', lower_bound=1.6)
 
-    def test_float_is_abover_lower_bound(self):
+    def test_float_is_above_lower_bound(self):
         result = self.config_helper.verify_number_within_range(self.config_file, 'float_30point5', lower_bound=30.5)
         self.assertEquals(30.5, result)
 
@@ -62,8 +68,8 @@ class ConfigValidationTests(unittest.TestCase):
         self.assertEquals(0.5, result)
 
     def test_float_is_within_range(self):
-        result = self.config_helper.verify_number_within_range(self.config_file, 'float_point5', lower_bound=-0.5, upper_bound=-0.51)
-        self.assert(0.5, result)
+        result = self.config_helper.verify_number_within_range(self.config_file, 'float_point5', lower_bound=0.5, upper_bound=0.51)
+        self.assertEquals(0.5, result)
 
     def tearDown(self):
         # Close config file

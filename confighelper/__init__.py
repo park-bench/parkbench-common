@@ -13,8 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: A lot of methods are called more thans once. Consider storing the
-#   returned value in a variable instead.
+# TODO: Eventually, Consider storing the returned value in a variable.
 
 import ConfigParser
 import logging
@@ -31,7 +30,7 @@ def _trace(self, message, *args, **kws):
     if self.isEnabledFor(trace_level_number):
         self._log(trace_level_number, message, args, **kws)
 
-# TODO: This should probably be rewritten eventually to use the typing methods
+# TODO: Eventually, this should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
 class ConfigHelper():
 
@@ -224,7 +223,7 @@ class ConfigHelper():
             option_text = config_file.get(self.global_section_name, option_name).strip()
         return option_text
 
-    # TODO: Look into adding log rotation to our logging config.
+    # TODO: Eventually, look into adding log rotation to our logging config.
 
     # Returns a dict that defines the logging options we like:
     #   The informative formatter.
