@@ -13,7 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: Eventually, Consider storing the returned value in a variable.
+# TODO: A lot of helper methods are called more thans once. Eventually, Consider storing the
+#   returned value in a variable.
 
 import ConfigParser
 import logging

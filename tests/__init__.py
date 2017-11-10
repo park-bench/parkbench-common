@@ -36,7 +36,7 @@ class ConfigValidationTests(unittest.TestCase):
             self.config_helper.verify_integer_within_range(self.config_file, 'int_negative_12', lower_bound=-11)
 
     def test_int_is_above_lower_bound(self):
-        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_30', lower_bound=29)
+        result = self.config_helper.verify_integer_within_range(self.config_file, 'int_30', lower_bound=30)
         self.assertEquals(30, result)
 
     def test_int_is_above_upper_bound(self):
