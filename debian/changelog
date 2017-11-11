@@ -1,4 +1,4 @@
-confighelper (0.3) UNRELEASED; urgency=low
+confighelper (0.3) stable; urgency=low
 
   * Better Python packaging.
   * Added configuration for Python's logging module.
