@@ -24,6 +24,10 @@ CONFIG_FILE_PATH = './tests/data/config.txt'
 
 
 class ConfigValidationTests(unittest.TestCase):
+    """To run this test, execute the following from the project root:
+    python -m unittest discover --pattern=__init__.py
+    """
+
     def setUp(self):
         # Load config file
         # Pass it to configParser
