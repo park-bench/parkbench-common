@@ -1,3 +1,9 @@
+confighelper (0.8) UNRELEASED; urgency=medium
+
+  * Bumped version number to match compatible libraries in project.
+
+ -- Andrew Klapp <andklapp@null.net>  Mon, 27 Nov 2017 20:29:56 -0600
+
 confighelper (0.3) stable; urgency=low
 
   * Better Python packaging.
