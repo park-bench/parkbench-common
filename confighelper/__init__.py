@@ -1,4 +1,4 @@
-# Copyright 2015 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2015-2017 Joel Allen Luellwitz and Andrew Klapp
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,15 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: A lot of helper methods are called more thans once. Eventually, Consider storing the
+# TODO: A lot of helper methods are called more thans once.  Eventually consider storing the
 #   returned value in a variable.
 
-import ConfigParser
 import logging
 import logging.config
 import sys
 
-trace_level_number = 5 # debug is 10, error is 20, and so on.
+trace_level_number = 5  # debug is 10, error is 20, and so on.
 
 
 # TODO: All these new methods should have documentation.
@@ -31,28 +30,33 @@ def _trace(self, message, *args, **kws):
     if self.isEnabledFor(trace_level_number):
         self._log(trace_level_number, message, args, **kws)
 
+
 # TODO: Eventually, this should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
 class ConfigHelper():
 
     def __init__(self):
-        # This is one reason why this library is specific to our projects. Our configuration files
-        #   currently just have one section.
+        # This is one reason why this library is specific to our projects.  Our configuration
+        #   files currently just have one section.
         self.global_section_name = 'General'
-        
+
         self.option_label = 'Option %s: %s'
         self.option_missing_error_message = 'Option %s not found. Quitting.'
-        
+
         self.logger = logging.getLogger()
 
-    # Returns the file handler for the log file. Mostly used for preserving file
-    #   descriptors upon daemonization.
     def get_log_file_handle(self):
+        """Returns the file handler for the log file.  Mostly used for preserving file
+        descriptors upon daemonization.
+        """
+
         return self.logger.handlers[0].stream.fileno()
 
-    # Applies the configuration defined in _get_logger_config and adds a trace
-    #   log level. This should be run as soon as a log file and log level are known.
     def configure_logger(self, log_file, log_level):
+        """Applies the configuration defined in _get_logger_config and adds a trace
+        log level.  This should be run as soon as a log file and log level are known.
+        """
+
         # Make it all uppercase because none of the other config file options
         #   have to be uppercase.
         log_level = log_level.upper()
@@ -64,37 +68,46 @@ class ConfigHelper():
         logging_config = self._get_logger_config(log_file, log_level)
         logging.config.dictConfig(logging_config)
 
-    # Verifies an option exists in the application configuration file. This method assumes
-    #   a logging file has not been initialized yet.
     # TODO: This method is obsolete now. Figure out whether it can be safely deleted.
     def verify_string_exists_prelogging(self, config_file, option_name):
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        """Verifies an option exists in the application configuration file.  This method
+        assumes a logging file has not been initialized yet.
+        """
+
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             print(self.option_missing_error_message % option_name)
             sys.exit(1)
 
-        print(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        print(self.option_label % (option_name, config_file.get(
+            self.global_section_name, option_name)))
         return config_file.get(self.global_section_name, option_name).strip()
 
-    # Verifies an option exists in the application configuration file. This method assumes
-    #   a logger has been instantiated.
     def verify_string_exists(self, config_file, option_name):
+        """Verifies an option exists in the application configuration file.  This method
+        assumes a logger has been instantiated.
+        """
+
         self.logger.trace('Verifying option %s' % option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             self.logger.critical(self.option_missing_error_message % option_name)
             sys.exit(1)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        self.logger.info(self.option_label % (option_name, config_file.get(
+            self.global_section_name, option_name)))
         return config_file.get(self.global_section_name, option_name).strip()
 
-    # Verifies a password exists in the application configuration file. This method does not log the
-    #   value of the config parameter. This method assumes a logger has been instantiated.
     def verify_password_exists(self, config_file, option_name):
+        """Verifies a password exists in the application configuration file.  This method does
+        not log the value of the config parameter.  This method assumes a logger has been
+        instantiated.
+        """
+
         self.logger.trace('Verifying password %s' % option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             self.logger.critical(self.option_missing_error_message % option_name)
             sys.exit(1)
@@ -102,135 +115,169 @@ class ConfigHelper():
         self.logger.info('Password %s exists.' % option_name)
         return config_file.get(self.global_section_name, option_name).strip()
 
-    # Verifies a numeric option exists in the application configuration file. This method assumes
-    #   a logger has been instantiated.
     def verify_number_exists(self, config_file, option_name):
+        """Verifies a numeric option exists in the application configuration file.  This
+        method assumes a logger has been instantiated.
+        """
+
         self.logger.trace('Verifying numeric option %s' % option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             self.logger.critical(self.option_missing_error_message % option_name)
             sys.exit(1)
 
         try:
-            float_value = float(config_file.get(self.global_section_name, option_name).strip());
+            float_value = float(
+                config_file.get(self.global_section_name, option_name).strip())
         except ValueError:
-            self.logger.critical('Option %s has a value of %s but that is not a number. Quitting.' % \
-                (option_name, config_file.get(self.global_section_name, option_name).strip()))
+            self.logger.critical(
+                'Option %s has a value of %s but that is not a number. Quitting.' % (
+                    option_name, config_file.get(self.global_section_name,
+                                                 option_name).strip()))
             sys.exit(1)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        self.logger.info(self.option_label % (option_name, config_file.get(
+            self.global_section_name, option_name)))
         return float_value
 
-    # Verifies an integer option exists in the application configuration file. This method assumes
-    #   a logger has been instantiated.
     def verify_integer_exists(self, config_file, option_name):
+        """Verifies an integer option exists in the application configuration file.  This
+        method assumes a logger has been instantiated.
+        """
+
         self.logger.trace('Verifying integer option %s' % option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             self.logger.critical(self.option_missing_error_message % option_name)
             sys.exit(1)
 
         try:
-            int_value = int(config_file.get(self.global_section_name, option_name).strip());
+            int_value = int(config_file.get(self.global_section_name, option_name).strip())
         except ValueError:
-            self.logger.critical('Option %s has a value of %s, but that is not an integer. Quitting.' % \
-                (option_name, config_file.get(self.global_section_name, option_name).strip()))
+            self.logger.critical(
+                'Option %s has a value of %s, but that is not an integer. Quitting.' %
+                (option_name, config_file.get(
+                    self.global_section_name, option_name).strip()))
             sys.exit(1)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        self.logger.info(self.option_label % (option_name, config_file.get(
+            self.global_section_name, option_name)))
         return int_value
 
-    # Verifies a numeric option exists in the application configuration file and is below the upper
-    #   bound and above or equal to the lower bound. This method assumes a logger has been
-    #   instantiated.
-    def verify_number_within_range(self, config_file, option_name, upper_bound=None, lower_bound=None):
+    def verify_number_within_range(
+            self, config_file, option_name, upper_bound=None, lower_bound=None):
+        """Verifies a numeric option exists in the application configuration file and is
+        below the upper bound and above or equal to the lower bound.  This method assumes a
+        logger has been instantiated.
+        """
+
         float_value = self.verify_number_exists(config_file, option_name)
         self._boundary_check(float_value, upper_bound=upper_bound, lower_bound=lower_bound)
         return float_value
 
-    # Verifies an integer option exists in the application configuration file and is below the upper
-    #   bound and above or equale to the lower bound. This method assumes a logger has been
-    #   instantiated.
-    def verify_integer_within_range(self, config_file, option_name, upper_bound=None, lower_bound=None):
+    def verify_integer_within_range(
+            self, config_file, option_name, upper_bound=None, lower_bound=None):
+        """Verifies an integer option exists in the application configuration file and is
+        below the upper bound and above or equale to the lower bound.  This method assumes a
+        logger has been instantiated.
+        """
+
         int_value = self.verify_integer_exists(config_file, option_name)
         self._boundary_check(int_value, upper_bound=upper_bound, lower_bound=lower_bound)
         return int_value
 
-    # Check that value is below upper_bound and above lower_bound, and raises
-    #   a ValueError exception if they are not.
     def _boundary_check(self, value, upper_bound, lower_bound):
+        """Check that value is below upper_bound and above lower_bound, and raises
+        a ValueError exception if they are not.
+        """
+
         self.logger.trace('Checking boundaries.')
 
         if upper_bound is not None:
             if value >= upper_bound:
-                message = 'Option has a value of %s, which is above upper boundary %s.' % (value, upper_bound)
+                message = 'Option has a value of %s, which is above upper boundary %s.' % (
+                    value, upper_bound)
                 raise ValueError(message)
 
         if lower_bound is not None:
             if value < lower_bound:
-                message = 'Option has a value of %s, which is below lower boundary %s.' % (value, lower_bound)
+                message = 'Option has a value of %s, which is below lower boundary %s.' % (
+                    value, lower_bound)
                 raise ValueError(message)
 
-    # Verifies an integer option is valid given a list of acceptable options. This method assumes
-    #   a logger has been instantiated.
     def verify_valid_integer_in_list(self, config_file, option_name, valid_options):
+        """Verifies an integer option is valid given a list of acceptable options.  This
+        method assumes a logger has been instantiated.
+        """
+
         self.logger.trace('Verifying integer option %s' % option_name)
         int_value = self.verify_integer_exists(config_file, option_name)
 
         if int_value not in valid_options:
-            self.logger.critical('%s is not a valid value for %s. Quitting.' % (int_value, option_name))
+            self.logger.critical('%s is not a valid value for %s. Quitting.' % (
+                int_value, option_name))
             sys.exit(1)
 
         return int_value
 
-    # Verifies an option in the application configuration file contains a comma delimited list of numbers.
-    #   This method assumes a logger has been instantiated.
     def verify_number_list_exists(self, config_file, option_name):
+        """Verifies an option in the application configuration file contains a comma
+        delimited list of numbers.  This method assumes a logger has been instantiated.
+        """
+
         self.logger.trace('Verifying numeric list option %s' % option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             self.logger.critical(self.option_missing_error_message % option_name)
             sys.exit(1)
 
-        string_array = config_file.get(self.global_section_name, option_name).strip().split(',')
-        float_array = [];
+        string_array = config_file.get(
+            self.global_section_name, option_name).strip().split(',')
+        float_array = []
 
         for string_value in string_array:
             try:
-                float_value = float(string_value.strip());
+                float_value = float(string_value.strip())
             except ValueError:
-                self.logger.critical('Option %s has a value of %s but that is not a list of numbers. Quitting.' % \
-                    (option_name, config_file.get(self.global_section_name, option_name).strip()))
+                self.logger.critical(
+                    'Option %s has a value of %s but that is not a list of numbers. '
+                    'Quitting.' % (option_name, config_file.get(
+                        self.global_section_name, option_name).strip()))
                 sys.exit(1)
             float_array.append(float_value)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+        self.logger.info(self.option_label % (
+            option_name, config_file.get(self.global_section_name, option_name)))
         return float_array
 
-    # Just grab a string from the config file.  Don't verify anything, and
-    #   return a None object if it is empty or doesn't exist.
     def get_string_if_exists(self, config_file, option_name):
+        """Just grab a string from the config file.  Don't verify anything, and
+        return a None object if it is empty or doesn't exist.
+        """
+
         self.logger.trace('Reading option %s' % option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or \
+        if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
+            # Return a None object.
             option_text = None
-            # return a None object
         else:
-            self.logger.info(self.option_label % (option_name, config_file.get(self.global_section_name, option_name)))
+            self.logger.info(self.option_label % (option_name, config_file.get(
+                self.global_section_name, option_name)))
             option_text = config_file.get(self.global_section_name, option_name).strip()
         return option_text
 
     # TODO: Eventually, look into adding log rotation to our logging config.
-
-    # Returns a dict that defines the logging options we like:
-    #   The informative formatter.
-    #   A stdout handler.
-    #   A file handler.
     def _get_logger_config(self, log_file, log_level):
+        """Returns a dict that defines the logging options we like:
+        The informative formatter.
+        A stdout handler.
+        A file handler.
+        """
+
         logger_config = {
             'version': 1,
             'formatters': {
