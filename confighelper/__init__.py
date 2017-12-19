@@ -100,9 +100,9 @@ class ConfigHelper():
         return config_file.get(self.global_section_name, option_name).strip()
 
     def verify_password_exists(self, config_file, option_name):
-        """Verifies a password exists in the application configuration file.  This method does
-        not log the value of the config parameter.  This method assumes a logger has been
-        instantiated.
+        """Verifies a password exists in the application configuration file.  This method
+        does not log the value of the config parameter.  This method assumes a logger has
+        been instantiated.
         """
 
         self.logger.trace('Verifying password %s' % option_name)
