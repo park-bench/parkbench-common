@@ -16,21 +16,23 @@
 # TODO: A lot of helper methods are called more thans once.  Eventually consider storing the
 #   returned value in a variable.
 
+__all__ = ['ConfigHelper']
+__author__ = 'Joel Luellwitz and Andrew Klapp'
+__version__ = '0.8'
+
 import logging
 import logging.config
 import sys
 
-__all__ = ['ConfigHelper']
-
-trace_level_number = 5  # debug is 10, error is 20, and so on.
+TRACE_LEVEL_NUMBER = 5  # debug is 10, error is 20, and so on.
 
 
 # TODO: All these new methods should have documentation.
 
 # Trace is defined here because being in another class breaks references to self.
 def _trace(self, message, *args, **kws):
-    if self.isEnabledFor(trace_level_number):
-        self._log(trace_level_number, message, args, **kws)
+    if self.isEnabledFor(TRACE_LEVEL_NUMBER):
+        self._log(TRACE_LEVEL_NUMBER, message, args, **kws)
 
 
 # TODO: Eventually, this should probably be rewritten eventually to use the typing methods
@@ -64,7 +66,7 @@ class ConfigHelper():
         log_level = log_level.upper()
 
         # Add a trace method to the Logger class
-        logging.addLevelName(trace_level_number, 'TRACE')
+        logging.addLevelName(TRACE_LEVEL_NUMBER, 'TRACE')
         logging.Logger.trace = _trace
 
         logging_config = self._get_logger_config(log_file, log_level)
