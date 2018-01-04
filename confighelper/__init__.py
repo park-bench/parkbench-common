@@ -1,4 +1,4 @@
-# Copyright 2015-2017 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2015-2018 Joel Allen Luellwitz and Andrew Klapp
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,10 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: A lot of helper methods are called more thans once.  Eventually consider storing the
+# TODO: A lot of helper methods are called more thans once. Eventually consider storing the
 #   returned value in a variable.
 
-__all__ = ['ConfigHelper']
+__all__ = ['ValidationException', 'ConfigHelper']
 __author__ = 'Joel Luellwitz and Andrew Klapp'
 __version__ = '0.8'
 
@@ -29,10 +29,14 @@ TRACE_LEVEL_NUMBER = 5  # debug is 10, error is 20, and so on.
 
 # TODO: All these new methods should have documentation.
 
-# Trace is defined here because being in another class breaks references to self.
 def _trace(self, message, *args, **kws):
+    """Trace is defined here because being in another class breaks references to self."""
     if self.isEnabledFor(TRACE_LEVEL_NUMBER):
         self._log(TRACE_LEVEL_NUMBER, message, args, **kws)
+
+
+class ValidationException(Exception):
+    """Indicates that configuration validation has failed."""
 
 
 # TODO: Eventually, this should probably be rewritten eventually to use the typing methods
@@ -45,7 +49,7 @@ class ConfigHelper():
         self.global_section_name = 'General'
 
         self.option_label = 'Option %s: %s'
-        self.option_missing_error_message = 'Option %s not found. Quitting.'
+        self.option_missing_error_message = 'Option %s not found.'
 
         self.logger = logging.getLogger()
 
@@ -80,8 +84,7 @@ class ConfigHelper():
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
-            print(self.option_missing_error_message % option_name)
-            sys.exit(1)
+            raise ValidationException(self.option_missing_error_message % option_name)
 
         print(self.option_label % (option_name, config_file.get(
             self.global_section_name, option_name)))
@@ -96,8 +99,9 @@ class ConfigHelper():
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
-            self.logger.critical(self.option_missing_error_message % option_name)
-            sys.exit(1)
+            message = self.option_missing_error_message % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         self.logger.info(self.option_label % (option_name, config_file.get(
             self.global_section_name, option_name)))
@@ -113,8 +117,9 @@ class ConfigHelper():
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
-            self.logger.critical(self.option_missing_error_message % option_name)
-            sys.exit(1)
+            message = self.option_missing_error_message % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         self.logger.info('Password %s exists.' % option_name)
         return config_file.get(self.global_section_name, option_name).strip()
@@ -128,18 +133,18 @@ class ConfigHelper():
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
-            self.logger.critical(self.option_missing_error_message % option_name)
-            sys.exit(1)
+            message = self.option_missing_error_message % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         try:
             float_value = float(
                 config_file.get(self.global_section_name, option_name).strip())
         except ValueError:
-            self.logger.critical(
-                'Option %s has a value of %s but that is not a number. Quitting.' % (
-                    option_name, config_file.get(self.global_section_name,
-                                                 option_name).strip()))
-            sys.exit(1)
+            message = 'Option %s has a value of %s but that is not a number.' % (
+                option_name, config_file.get(self.global_section_name, option_name).strip())
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         self.logger.info(self.option_label % (option_name, config_file.get(
             self.global_section_name, option_name)))
@@ -154,17 +159,18 @@ class ConfigHelper():
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
-            self.logger.critical(self.option_missing_error_message % option_name)
-            sys.exit(1)
+            message = self.option_missing_error_message % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         try:
             int_value = int(config_file.get(self.global_section_name, option_name).strip())
         except ValueError:
-            self.logger.critical(
-                'Option %s has a value of %s, but that is not an integer. Quitting.' %
-                (option_name, config_file.get(
-                    self.global_section_name, option_name).strip()))
-            sys.exit(1)
+            message = \
+                'Option %s has a value of %s, but that is not an integer.' % \
+                (option_name, config_file.get(self.global_section_name, option_name).strip())
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         self.logger.info(self.option_label % (option_name, config_file.get(
             self.global_section_name, option_name)))
@@ -203,13 +209,13 @@ class ConfigHelper():
             if value >= upper_bound:
                 message = 'Option has a value of %s, which is above upper boundary %s.' % (
                     value, upper_bound)
-                raise ValueError(message)
+                raise ValidationException(message)
 
         if lower_bound is not None:
             if value < lower_bound:
                 message = 'Option has a value of %s, which is below lower boundary %s.' % (
                     value, lower_bound)
-                raise ValueError(message)
+                raise ValidationException(message)
 
     def verify_valid_integer_in_list(self, config_file, option_name, valid_options):
         """Verifies an integer option is valid given a list of acceptable options.  This
@@ -220,9 +226,9 @@ class ConfigHelper():
         int_value = self.verify_integer_exists(config_file, option_name)
 
         if int_value not in valid_options:
-            self.logger.critical('%s is not a valid value for %s. Quitting.' % (
-                int_value, option_name))
-            sys.exit(1)
+            message = '%s is not a valid value for %s.' % (int_value, option_name)
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         return int_value
 
@@ -235,8 +241,9 @@ class ConfigHelper():
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
-            self.logger.critical(self.option_missing_error_message % option_name)
-            sys.exit(1)
+            message = self.option_missing_error_message % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
 
         string_array = config_file.get(
             self.global_section_name, option_name).strip().split(',')
@@ -246,11 +253,11 @@ class ConfigHelper():
             try:
                 float_value = float(string_value.strip())
             except ValueError:
-                self.logger.critical(
-                    'Option %s has a value of %s but that is not a list of numbers. '
-                    'Quitting.' % (option_name, config_file.get(
-                        self.global_section_name, option_name).strip()))
-                sys.exit(1)
+                message = 'Option %s has a value of %s but that is not a list of numbers. ' \
+                    % (option_name, config_file.get(
+                        self.global_section_name, option_name).strip())
+                self.logger.critical(message)
+                raise ValidationException(message)
             float_array.append(float_value)
 
         self.logger.info(self.option_label % (

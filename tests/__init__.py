@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-# Copyright 2017 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2017-2018 Joel Allen Luellwitz and Andrew Klapp
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ __author__ = 'Joel Luellwitz and Andrew Klapp'
 __version__ = '0.8'
 
 import confighelper
+from confighelper import ValidationException
 import ConfigParser
 import logging
 import unittest
@@ -48,14 +49,12 @@ class ConfigValidationTests(unittest.TestCase):
         result = self.config_helper.verify_integer_exists(self.config_file, 'int_1')
         self.assertEqual(1, result)
 
-    # This method does not throw an exception, it exits instead. The next release
-    #   will solve this issue.
-    #def test_integer_rejects_float(self):
-    #    with self.assertRaises(ValueError):
-    #        self.config_helper.verify_integer_exists(self.config_file, 'float_point5')
+    def test_integer_rejects_float(self):
+        with self.assertRaises(ValidationException):
+            self.config_helper.verify_integer_exists(self.config_file, 'float_point5')
 
     def test_int_is_below_lower_bound(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             self.config_helper.verify_integer_within_range(
                 self.config_file, 'int_negative_12', lower_bound=-11)
 
@@ -65,7 +64,7 @@ class ConfigValidationTests(unittest.TestCase):
         self.assertEquals(30, result)
 
     def test_int_is_above_upper_bound(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             self.config_helper.verify_integer_within_range(
                 self.config_file, 'int_30', upper_bound=30)
 
@@ -80,7 +79,7 @@ class ConfigValidationTests(unittest.TestCase):
         self.assertEquals(1, result)
 
     def test_float_is_below_lower_bound(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             self.config_helper.verify_number_within_range(
                 self.config_file, 'float_negative_1point5', lower_bound=1.6)
 
@@ -90,7 +89,7 @@ class ConfigValidationTests(unittest.TestCase):
         self.assertEquals(30.5, result)
 
     def test_float_is_above_upper_bound(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationException):
             self.config_helper.verify_number_within_range(
                 self.config_file, 'float_30point5', upper_bound=30.5)
 
