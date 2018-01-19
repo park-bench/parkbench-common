@@ -76,26 +76,12 @@ class ConfigHelper():
         logging_config = self._get_logger_config(log_file, log_level)
         logging.config.dictConfig(logging_config)
 
-    # TODO: This method is obsolete now. Figure out whether it can be safely deleted.
-    def verify_string_exists_prelogging(self, config_file, option_name):
-        """Verifies an option exists in the application configuration file.  This method
-        assumes a logging file has not been initialized yet.
-        """
-
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
-            raise ValidationException(self.option_missing_error_message % option_name)
-
-        print(self.option_label % (option_name, config_file.get(
-            self.global_section_name, option_name)))
-        return config_file.get(self.global_section_name, option_name).strip()
-
     def verify_string_exists(self, config_file, option_name):
         """Verifies an option exists in the application configuration file.  This method
         assumes a logger has been instantiated.
         """
 
-        self.logger.trace('Verifying option %s' % option_name)
+        self.logger.debug('Verifying option %s' % option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -113,7 +99,7 @@ class ConfigHelper():
         been instantiated.
         """
 
-        self.logger.trace('Verifying password %s' % option_name)
+        self.logger.debug('Verifying password %s' % option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -129,7 +115,7 @@ class ConfigHelper():
         method assumes a logger has been instantiated.
         """
 
-        self.logger.trace('Verifying numeric option %s' % option_name)
+        self.logger.debug('Verifying numeric option %s' % option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -155,7 +141,7 @@ class ConfigHelper():
         method assumes a logger has been instantiated.
         """
 
-        self.logger.trace('Verifying integer option %s' % option_name)
+        self.logger.debug('Verifying integer option %s' % option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -203,7 +189,7 @@ class ConfigHelper():
         a ValueError exception if they are not.
         """
 
-        self.logger.trace('Checking boundaries.')
+        self.logger.debug('Checking boundaries.')
 
         if upper_bound is not None:
             if value >= upper_bound:
@@ -222,7 +208,7 @@ class ConfigHelper():
         method assumes a logger has been instantiated.
         """
 
-        self.logger.trace('Verifying integer option %s' % option_name)
+        self.logger.debug('Verifying integer option %s' % option_name)
         int_value = self.verify_integer_exists(config_file, option_name)
 
         if int_value not in valid_options:
@@ -237,7 +223,7 @@ class ConfigHelper():
         delimited list of numbers.  This method assumes a logger has been instantiated.
         """
 
-        self.logger.trace('Verifying numeric list option %s' % option_name)
+        self.logger.debug('Verifying numeric list option %s' % option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -269,7 +255,7 @@ class ConfigHelper():
         return a None object if it is empty or doesn't exist.
         """
 
-        self.logger.trace('Reading option %s' % option_name)
+        self.logger.debug('Reading option %s' % option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
