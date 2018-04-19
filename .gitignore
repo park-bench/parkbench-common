@@ -8,6 +8,7 @@ debian/confighelper.substvars
 debian/confighelper/
 debian/debhelper.log
 debian/debhelper-build-stamp
+debian/.debhelper/*
 debian/files
 debian/python*
 debian/substvars
