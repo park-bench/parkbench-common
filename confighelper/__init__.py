@@ -39,6 +39,7 @@ class ValidationException(Exception):
     """Indicates that configuration validation has failed."""
 
 
+# TODO: Add a method to get a list of strings.
 # TODO: Eventually, this should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
 class ConfigHelper():
