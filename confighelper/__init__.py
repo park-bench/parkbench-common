@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: A lot of helper methods are called more thans once. Eventually consider storing the
-#   returned value in a variable.
+# TODO #5: Most methods read values more than once. Store those in a method-level variable.
+# TODO #6: Write a method to abstract error cases for retreiving variables from the 
 
 __all__ = ['ValidationException', 'ConfigHelper']
 __author__ = 'Joel Luellwitz and Andrew Klapp'
@@ -27,7 +27,7 @@ import sys
 TRACE_LEVEL_NUMBER = 5  # debug is 10, error is 20, and so on.
 
 
-# TODO: All these new methods should have documentation.
+# TODO #8: All these new methods should have documentation.
 
 def _trace(self, message, *args, **kws):
     """Trace is defined here because being in another class breaks references to self."""
@@ -39,8 +39,8 @@ class ValidationException(Exception):
     """Indicates that configuration validation has failed."""
 
 
-# TODO: Add a method to get a list of strings.
-# TODO: Eventually, this should probably be rewritten eventually to use the typing methods
+# TODO #3: Add a method to get a list of strings.
+# TODO #7: Eventually, this should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
 class ConfigHelper():
 
@@ -268,7 +268,7 @@ class ConfigHelper():
             option_text = config_file.get(self.global_section_name, option_name).strip()
         return option_text
 
-    # TODO: Eventually, look into adding log rotation to our logging config.
+    # TODO #4: Eventually, look into adding log rotation to our logging config.
     def _get_logger_config(self, log_file, log_level):
         """Returns a dict that defines the logging options we like:
         The informative formatter.
