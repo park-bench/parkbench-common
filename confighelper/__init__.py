@@ -267,6 +267,14 @@ class ConfigHelper():
             option_text = config_file.get(self.global_section_name, option_name).strip()
         return option_text
 
+    def _get_option(self, config_file, option_name):
+        """Reads an option named option_name from config_file."""
+        option_value = None
+        if config_file.has_option(self.global_section_name, option_name):
+            option_value = config_file.get(self.global_section_name, option_name).strip()
+
+        return option_value
+
     # TODO #4: Eventually, look into adding log rotation to our logging config.
     def _get_logger_config(self, log_file, log_level):
         """Returns a dict that defines the logging options we like:
