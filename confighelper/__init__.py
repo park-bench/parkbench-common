@@ -81,7 +81,7 @@ class ConfigHelper():
         assumes a logger has been instantiated.
         """
 
-        self.logger.debug('Verifying option %s' % option_name)
+        self.logger.debug('Verifying option %s', option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -89,8 +89,8 @@ class ConfigHelper():
             self.logger.critical(message)
             raise ValidationException(message)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(
-            self.global_section_name, option_name)))
+        self.logger.info(self.option_label, option_name, config_file.get(
+            self.global_section_name, option_name))
         return config_file.get(self.global_section_name, option_name).strip()
 
     def verify_password_exists(self, config_file, option_name):
@@ -99,7 +99,7 @@ class ConfigHelper():
         been instantiated.
         """
 
-        self.logger.debug('Verifying password %s' % option_name)
+        self.logger.debug('Verifying password %s', option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -107,7 +107,7 @@ class ConfigHelper():
             self.logger.critical(message)
             raise ValidationException(message)
 
-        self.logger.info('Password %s exists.' % option_name)
+        self.logger.info('Password %s exists.', option_name)
         return config_file.get(self.global_section_name, option_name).strip()
 
     def verify_number_exists(self, config_file, option_name):
@@ -115,7 +115,7 @@ class ConfigHelper():
         method assumes a logger has been instantiated.
         """
 
-        self.logger.debug('Verifying numeric option %s' % option_name)
+        self.logger.debug('Verifying numeric option %s', option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -132,8 +132,8 @@ class ConfigHelper():
             self.logger.critical(message)
             raise ValidationException(message)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(
-            self.global_section_name, option_name)))
+        self.logger.info(self.option_label, option_name, config_file.get(
+            self.global_section_name, option_name))
         return float_value
 
     def verify_integer_exists(self, config_file, option_name):
@@ -141,7 +141,7 @@ class ConfigHelper():
         method assumes a logger has been instantiated.
         """
 
-        self.logger.debug('Verifying integer option %s' % option_name)
+        self.logger.debug('Verifying integer option %s', option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -158,8 +158,8 @@ class ConfigHelper():
             self.logger.critical(message)
             raise ValidationException(message)
 
-        self.logger.info(self.option_label % (option_name, config_file.get(
-            self.global_section_name, option_name)))
+        self.logger.info(self.option_label, option_name, config_file.get(
+            self.global_section_name, option_name))
         return int_value
 
     def verify_number_within_range(
@@ -208,7 +208,7 @@ class ConfigHelper():
         method assumes a logger has been instantiated.
         """
 
-        self.logger.debug('Verifying integer option %s' % option_name)
+        self.logger.debug('Verifying integer option %s', option_name)
         int_value = self.verify_integer_exists(config_file, option_name)
 
         if int_value not in valid_options:
@@ -223,7 +223,7 @@ class ConfigHelper():
         delimited list of numbers.  This method assumes a logger has been instantiated.
         """
 
-        self.logger.debug('Verifying numeric list option %s' % option_name)
+        self.logger.debug('Verifying numeric list option %s', option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
@@ -246,8 +246,8 @@ class ConfigHelper():
                 raise ValidationException(message)
             float_array.append(float_value)
 
-        self.logger.info(self.option_label % (
-            option_name, config_file.get(self.global_section_name, option_name)))
+        self.logger.info(self.option_label, option_name, config_file.get(
+            self.global_section_name, option_name))
         return float_array
 
     def get_string_if_exists(self, config_file, option_name):
@@ -255,15 +255,15 @@ class ConfigHelper():
         return a None object if it is empty or doesn't exist.
         """
 
-        self.logger.debug('Reading option %s' % option_name)
+        self.logger.debug('Reading option %s', option_name)
 
         if (not(config_file.has_option(self.global_section_name, option_name)) or
                 (config_file.get(self.global_section_name, option_name).strip() == '')):
             # Return a None object.
             option_text = None
         else:
-            self.logger.info(self.option_label % (option_name, config_file.get(
-                self.global_section_name, option_name)))
+            self.logger.info(self.option_label, option_name, config_file.get(
+                self.global_section_name, option_name))
             option_text = config_file.get(self.global_section_name, option_name).strip()
         return option_text
 
