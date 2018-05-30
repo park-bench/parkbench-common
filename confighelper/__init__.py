@@ -27,8 +27,6 @@ import sys
 TRACE_LEVEL_NUMBER = 5  # debug is 10, error is 20, and so on.
 
 
-# TODO #8: All these new methods should have documentation.
-
 def _trace(self, message, *args, **kws):
     """Trace is defined here because being in another class breaks references to self."""
     if self.isEnabledFor(TRACE_LEVEL_NUMBER):
@@ -43,6 +41,7 @@ class ValidationException(Exception):
 # TODO #7: Eventually, this should probably be rewritten eventually to use the typing methods
 #   provided in configparser and to just add methods for our specific use cases.
 class ConfigHelper():
+    """Contains many methods to help with configuration."""
 
     def __init__(self):
         # This is one reason why this library is specific to our projects.  Our configuration
