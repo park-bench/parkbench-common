@@ -268,6 +268,16 @@ class ConfigHelper():
 
         return option_value
 
+    def _require_option(self, config_file, option_name):
+        option_value = self._get_option(config_file, option_name)
+
+        if option_value is None:
+            message = self.option_missing_error_message % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
+
+        return option_value
+
     # TODO #4: Eventually, look into adding log rotation to our logging config.
     def _get_logger_config(self, log_file, log_level):
         """Returns a dict that defines the logging options we like:
