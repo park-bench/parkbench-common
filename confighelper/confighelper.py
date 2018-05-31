@@ -15,6 +15,7 @@
 
 # TODO #5: Most methods read values more than once. Store those in a method-level variable.
 # TODO #6: Write a method to abstract error cases for retreiving variables from the 
+""" confighelper.confighelper helps read and validate options from a ConfigParser object."""
 
 import logging
 import logging.config

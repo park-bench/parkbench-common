@@ -13,7 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from config import ConfigHelper
+"""confighelper is a support module for park bench projects. Currently it only holds a class
+specifically to help read and validate configuration files."""
+
+from .confighelper import ConfigHelper
 
 __all__ = ['ConfigHelper']
 __author__ = 'Joel Luellwitz and Andrew Klapp'
