@@ -230,6 +230,22 @@ class ConfigHelper():
         string_array = [s.strip() for s in raw_string_array]
         return string_array
 
+    def verify_boolean_exists(self, config_file, option_name):
+        """Verifies a boolean option exists in the application configuration file.  This
+        method assumes a logger has been instantiated.
+        """
+        option_text = self._require_option(config_file, option_name).lower()
+        if option_text == 'true':
+            boolean_value = True
+        elif option_text == 'false':
+            boolean_value = False
+        else:
+            message = 'Option %s is not "true" or "false"' % option_name
+            self.logger.critical(message)
+            raise ValidationException(message)
+
+        return boolean_value
+
     def get_string_if_exists(self, config_file, option_name):
         """Just grab a string from the config file.  Don't verify anything, and
         return a None object if it is empty or doesn't exist.
