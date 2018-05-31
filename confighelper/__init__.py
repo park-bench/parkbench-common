@@ -82,16 +82,10 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying option %s', option_name)
+        option_text = self._require_option(config_file, option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
-            message = self.option_missing_error_message % option_name
-            self.logger.critical(message)
-            raise ValidationException(message)
-
-        self.logger.info(self.option_label, option_name, config_file.get(
-            self.global_section_name, option_name))
-        return config_file.get(self.global_section_name, option_name).strip()
+        self.logger.info(self.option_label, option_name, option_text)
+        return option_text
 
     def verify_password_exists(self, config_file, option_name):
         """Verifies a password exists in the application configuration file.  This method
@@ -100,15 +94,10 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying password %s', option_name)
-
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
-            message = self.option_missing_error_message % option_name
-            self.logger.critical(message)
-            raise ValidationException(message)
+        option_text = self._require_option(config_file, option_name)
 
         self.logger.info('Password %s exists.', option_name)
-        return config_file.get(self.global_section_name, option_name).strip()
+        return option_text
 
     def verify_number_exists(self, config_file, option_name):
         """Verifies a numeric option exists in the application configuration file.  This
@@ -116,19 +105,13 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying numeric option %s', option_name)
-
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
-            message = self.option_missing_error_message % option_name
-            self.logger.critical(message)
-            raise ValidationException(message)
+        option_text = self._require_option(config_file, option_name)
 
         try:
-            float_value = float(
-                config_file.get(self.global_section_name, option_name).strip())
+            float_value = float(option_text)
         except ValueError:
             message = 'Option %s has a value of %s but that is not a number.' % (
-                option_name, config_file.get(self.global_section_name, option_name).strip())
+                option_name, option_text)
             self.logger.critical(message)
             raise ValidationException(message)
 
@@ -142,12 +125,7 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying integer option %s', option_name)
-        option_text = self._get_option(config_file, option_name)
-
-        if option_text is None:
-            message = self.option_missing_error_message % option_name
-            self.logger.critical(message)
-            raise ValidationException(message)
+        option_text = self._require_option(config_file, option_name)
 
         try:
             int_value = int(option_text)
@@ -223,12 +201,7 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying numeric list option %s', option_name)
-        option_text = self._get_option(config_file, option_name)
-
-        if option_text is None:
-            message = self.option_missing_error_message % option_name
-            self.logger.critical(message)
-            raise ValidationException(message)
+        option_text = self._require_option(config_file, option_name)
 
         string_array = option_text.split(',')
         float_array = []
