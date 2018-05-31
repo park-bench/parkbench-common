@@ -142,24 +142,23 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying integer option %s', option_name)
+        option_text = self._get_option(config_file, option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
+        if option_text is None:
             message = self.option_missing_error_message % option_name
             self.logger.critical(message)
             raise ValidationException(message)
 
         try:
-            int_value = int(config_file.get(self.global_section_name, option_name).strip())
+            int_value = int(option_text)
         except ValueError:
             message = \
                 'Option %s has a value of %s, but that is not an integer.' % \
-                (option_name, config_file.get(self.global_section_name, option_name).strip())
+                (option_name, option_text)
             self.logger.critical(message)
             raise ValidationException(message)
 
-        self.logger.info(self.option_label, option_name, config_file.get(
-            self.global_section_name, option_name))
+        self.logger.info(self.option_label, option_name, option_text)
         return int_value
 
     def verify_number_within_range(
@@ -224,15 +223,14 @@ class ConfigHelper():
         """
 
         self.logger.debug('Verifying numeric list option %s', option_name)
+        option_text = self._get_option(config_file, option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
+        if option_text is None:
             message = self.option_missing_error_message % option_name
             self.logger.critical(message)
             raise ValidationException(message)
 
-        string_array = config_file.get(
-            self.global_section_name, option_name).strip().split(',')
+        string_array = option_text.split(',')
         float_array = []
 
         for string_value in string_array:
@@ -240,14 +238,12 @@ class ConfigHelper():
                 float_value = float(string_value.strip())
             except ValueError:
                 message = 'Option %s has a value of %s but that is not a list of numbers. ' \
-                    % (option_name, config_file.get(
-                        self.global_section_name, option_name).strip())
+                    % (option_name, option_text)
                 self.logger.critical(message)
                 raise ValidationException(message)
             float_array.append(float_value)
 
-        self.logger.info(self.option_label, option_name, config_file.get(
-            self.global_section_name, option_name))
+        self.logger.info(self.option_label, option_name, option_text)
         return float_array
 
     def get_string_if_exists(self, config_file, option_name):
@@ -256,22 +252,19 @@ class ConfigHelper():
         """
 
         self.logger.debug('Reading option %s', option_name)
+        option_text = self._get_option(config_file, option_name)
 
-        if (not(config_file.has_option(self.global_section_name, option_name)) or
-                (config_file.get(self.global_section_name, option_name).strip() == '')):
-            # Return a None object.
-            option_text = None
-        else:
-            self.logger.info(self.option_label, option_name, config_file.get(
-                self.global_section_name, option_name))
-            option_text = config_file.get(self.global_section_name, option_name).strip()
-        return option_text
+        if option_text:
+            self.logger.info(self.option_label, option_name, option_text)
 
     def _get_option(self, config_file, option_name):
         """Reads an option named option_name from config_file."""
         option_value = None
         if config_file.has_option(self.global_section_name, option_name):
             option_value = config_file.get(self.global_section_name, option_name).strip()
+
+        if option_value == '':
+            option_value = None
 
         return option_value
 
