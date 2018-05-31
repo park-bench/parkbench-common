@@ -219,6 +219,17 @@ class ConfigHelper():
         self.logger.info(self.option_label, option_name, option_text)
         return float_array
 
+    def verify_string_list_exists(self, config_file, option_name):
+        """Parses a comma-delimited list of strings into an actual list and strips
+        leading and trailing whitespace.
+        """
+        option_text = self.verify_string_exists(config_file, option_name)
+        raw_string_array = option_text.split(',')
+
+        # run strip() on each item in raw_string_array
+        string_array = [s.strip() for s in raw_string_array]
+        return string_array
+
     def get_string_if_exists(self, config_file, option_name):
         """Just grab a string from the config file.  Don't verify anything, and
         return a None object if it is empty or doesn't exist.
