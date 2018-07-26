@@ -10,5 +10,5 @@ Build-Depends: debhelper (>=9),
 
 Package: confighelper
 Architecture: all
-Depends: ${python::Depends}, ${misc::Depends}
+Depends: python-all, ${python::Depends}, ${misc::Depends}
 Description: Helps parse Parkbench configuration files.

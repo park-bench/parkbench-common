@@ -109,7 +109,7 @@ class ConfigHelper(object):
 
         option_value = None
         if config_file.has_option(self.global_section_name, option_name):
-            option_value = config_file.get(self.global_section_name, option_name).strip()
+            option_value = config_file.get(self.global_section_name, option_name)
 
         if option_value == '':
             option_value = None
@@ -344,7 +344,7 @@ class ConfigHelper(object):
         """
         option_value = None
         if config_file.has_option(self.global_section_name, option_name):
-            option_value = config_file.get(self.global_section_name, option_name).strip()
+            option_value = config_file.get(self.global_section_name, option_name)
 
         if option_value == '':
             option_value = None
