@@ -13,11 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""confighelper is a support module for park bench projects. Currently it only holds a class
-specifically to help read and validate configuration files."""
+"""confighelper is a support module for Parkbench projects. Currently it only holds a class
+to help read and validate configuration files."""
 
 from .confighelper import ConfigHelper
+from .confighelper import ValidationException
 
-__all__ = ['ConfigHelper']
+__all__ = ['ConfigHelper', 'ValidationException']
 __author__ = 'Joel Luellwitz and Andrew Klapp'
 __version__ = '0.8'
