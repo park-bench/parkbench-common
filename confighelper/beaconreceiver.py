@@ -1,7 +1,4 @@
-""" NetCheck beacon
-beacon.py provides the Beacon class for easy determination of network availability. It
-implements rate limiting and directory checking.
-"""
+""" Provides the receiving component of a filesystem-based IPC mechanism."""
 
 import os
 import logging
@@ -11,7 +8,7 @@ import tmpfs
 CHECK_INTERVAL = 5
 
 class BeaconReceiver:
-    """ Abstracts away the details of NetCheck's connection beacon."""
+    """ Provides the receiving component of a filesystem-based IPC mechanism."""
     def __init__(self, program_name, beacon_name):
         self.logger = logging.getLogger(__name__)
 
