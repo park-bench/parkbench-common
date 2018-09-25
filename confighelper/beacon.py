@@ -4,15 +4,18 @@ implements rate limiting and directory checking.
 """
 
 import os
+import logging
 import time
-import beaconbroadcaster
+import tmpfs
 
-BEACON_PATH = beaconbroadcaster.BEACON_PATH
 CHECK_INTERVAL = 5
 
 class BeaconReceiver:
     """ Abstracts away the details of NetCheck's connection beacon."""
-    def __init__(self):
+    def __init__(self, program_name, beacon_name):
+        self.logger = logging.getLogger(__name__)
+
+        self.beacon_path = '/var/spool/%s/%s/' % (program_name, beacon_name)
         self.last_beacon_time = None
         self.next_check_time = time.time()
 
@@ -33,9 +36,9 @@ class BeaconReceiver:
         """ Retrieve the most recent time on which a beacon has been written."""
         beacon_time = None
         # TODO: Stuff all this in a try block.
-        if os.path.isdir(BEACON_PATH):
-            if beaconbroadcaster.check_beacon_path_mount():
-                file_list = os.listdir(BEACON_PATH)
+        if os.path.isdir(self.beacon_path):
+            if tmpfs.path_is_tmpfs_mountpoint(self.beacon_path):
+                file_list = os.listdir(self.beacon_path)
                 latest_file_name = sorted(file_list)[0]
                 beacon_time = latest_file_name.split('---')[0]
 
