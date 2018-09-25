@@ -29,13 +29,12 @@ class BeaconReceiver:
             if latest_beacon_time >= self.last_beacon_time:
                 self.last_beacon_time = latest_beacon_time
 
-                self.next_check_time = self.next_check_time + CHECK_INTERVAL
+            self.next_check_time = self.next_check_time + CHECK_INTERVAL
         return beacon_updated
 
     def _read_beacon_time(self):
         """ Retrieve the most recent time on which a beacon has been written."""
         beacon_time = None
-        # TODO: Stuff all this in a try block.
         if os.path.isdir(self.beacon_path):
             if tmpfs.path_is_tmpfs_mountpoint(self.beacon_path):
                 file_list = os.listdir(self.beacon_path)
