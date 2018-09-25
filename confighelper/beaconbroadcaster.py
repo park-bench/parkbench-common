@@ -64,8 +64,6 @@ class BeaconBroadcaster(object):
             os.rename(partial_path, final_path)
 
         except Exception as exception:
-            # Print a log message and raise an exception
-            pass
             self.logger.critical(
                 'Could not create beacon file for beacon %s for program %s. %s: %s.',
                 self.beacon_name, self.program_name, type(exception).__name__,
