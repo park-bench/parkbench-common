@@ -5,7 +5,9 @@ import logging
 import time
 import tmpfs
 
-class BeaconReceiver:
+BEACON_PATH = '/var/spool/'
+
+class BeaconReceiver(object):
     """ Provides the receiving component of a filesystem-based IPC mechanism.
 
     program_name: The name of the program that broadcasts this beacon
@@ -17,7 +19,7 @@ class BeaconReceiver:
 
         self.beacon_name = beacon_name
         self.program_name = program_name
-        self.beacon_path = '/var/spool/%s/%s/' % (program_name, beacon_name)
+        self.beacon_path = '%s/%s/%s/' % (BEACON_PATH, program_name, beacon_name)
         self.last_beacon_time = None
         self.next_check_time = time.time()
         self.check_interval = check_interval

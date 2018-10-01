@@ -2,6 +2,9 @@
 
 import subprocess
 
+class TmpfsMountError(Exception):
+    """ Raised when a tmpfs mount operation appears to fail."""
+
 def path_is_tmpfs_mountpoint(path):
     """ Checks that a path is mounted as tmpfs.
 
@@ -18,5 +21,9 @@ def mount_tmpfs(path, size):
     size: The size of the disk
     """
 
-    # TODO: Actually process return codes and raise proper exceptions.
-    subprocess.call(['mount', '-t', 'tmpfs', '-size=%s' % size, 'none', path])
+    if not path_is_tmpfs_mountpoint(path):
+        # TODO: Use the return code to raise appropriate exceptions.
+        subprocess.check_call(['mount', '-t', 'tmpfs', '-size=%s' % size, 'none', path])
+
+    if not path_is_tmpfs_mountpoint(path):
+        raise TmpfsMountError('Could not mount tmpfs to %s.' % path)

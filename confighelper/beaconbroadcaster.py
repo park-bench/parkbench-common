@@ -10,6 +10,9 @@ GROUP_RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXGRP | stat
 GROUP_RO_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IRGRP
 RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
 
+BEACON_PATH = '/var/spool/'
+TMPFS_SIZE = '1M'
+
 class BeaconBroadcasterInitException(Exception):
     """ This exception is raised when a BeaconBroadcaster object fails to initialize."""
 
@@ -17,7 +20,7 @@ class BeaconBroadcasterBroadcastException(Exception):
     """ This exception is raised when a BeaconBroadcaster object fails to send a beacon."""
 
 class BeaconBroadcaster(object):
-    """ Provides the broadcasting component of a a filesystem-based IPC mechanism."""
+    """ Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
     def __init__(self, program_name, beacon_name, uid, gid):
         """ Initial configuration of the beacon directory. This must be done as root.
@@ -29,7 +32,7 @@ class BeaconBroadcaster(object):
         """
 
         self.logger = logging.getLogger(__name__)
-        self.beacon_path = '/var/spool/%s/%s/' % (program_name, beacon_name)
+        self.beacon_path = '%s/%s/%s/' % (BEACON_PATH, program_name, beacon_name)
         self.partial_beacon_path = '%s/partial/' % self.beacon_path
         self.program_name = program_name
         self.beacon_name = beacon_name
@@ -37,15 +40,8 @@ class BeaconBroadcaster(object):
         self._create_directory(self.beacon_path)
         self._set_directory_permissions(self.beacon_path, GROUP_RW_MODE, uid, gid)
 
-        if not tmpfs.path_is_tmpfs_mountpoint(self.beacon_path):
-            tmpfs.mount_tmpfs(self.beacon_path, '25%')
-
-            # TODO: Make tmpfs.py report errors properly.
-            if not tmpfs.path_is_tmpfs_mountpoint(self.beacon_path):
-                self.logger.critical(
-                    'Could not create tmpfs for beacon %s for program %s.', beacon_name,
-                    program_name)
-                raise BeaconBroadcasterInitException
+        # TODO: Make tmpfs.py report errors properly.
+        tmpfs.mount_tmpfs(self.beacon_path, TMPFS_SIZE)
 
         self._create_directory(self.partial_beacon_path)
         self._set_directory_permissions(self.partial_beacon_path, RW_MODE, uid, gid)
