@@ -38,7 +38,7 @@ def mount_tmpfs(path, size):
 
     if not path_is_tmpfs_mountpoint(path):
         # TODO: Use the return code to raise appropriate exceptions.
-        subprocess.check_call(['mount', '-t', 'tmpfs', '-size=%s' % size, 'none', path])
+        subprocess.call(['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
 
     if not path_is_tmpfs_mountpoint(path):
         raise TmpfsMountError('Could not mount tmpfs to %s.' % path)
