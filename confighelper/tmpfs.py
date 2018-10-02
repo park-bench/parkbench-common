@@ -15,6 +15,7 @@
 
 """ Provides helper functions for tmpfs usage."""
 
+import os
 import subprocess
 
 class TmpfsMountError(Exception):
@@ -25,6 +26,7 @@ def path_is_tmpfs_mountpoint(path):
 
     path: The path to check
     """
+    path = os.path.abspath(path)
 
     return 'none on {0} type tmpfs'.format(path) in \
         str(subprocess.check_output('mount'))
@@ -36,9 +38,13 @@ def mount_tmpfs(path, size):
     size: The size of the disk
     """
 
-    if not path_is_tmpfs_mountpoint(path):
-        # TODO: Use the return code to raise appropriate exceptions.
-        subprocess.call(['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+    path = os.path.abspath(path)
 
     if not path_is_tmpfs_mountpoint(path):
-        raise TmpfsMountError('Could not mount tmpfs to %s.' % path)
+        # TODO: Use the return code to raise appropriate exceptions.
+        return_code = subprocess.call(
+            ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+
+    if not path_is_tmpfs_mountpoint(path):
+        raise TmpfsMountError(
+            'Could not mount tmpfs to %s. Mount return code was %s.' % (path, return_code))
