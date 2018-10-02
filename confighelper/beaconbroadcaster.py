@@ -56,6 +56,7 @@ class BeaconBroadcaster(object):
         self._set_directory_permissions(self.beacon_path, GROUP_RW_MODE, uid, gid)
 
         # TODO: Make tmpfs.py report errors properly.
+        # TODO: Mount on /var/spool/program_name/ramdisk, not on self.beacon_directory.
         tmpfs.mount_tmpfs(self.beacon_path, TMPFS_SIZE)
 
         self._create_directory(self.partial_beacon_path)
@@ -63,23 +64,25 @@ class BeaconBroadcaster(object):
 
     def send(self):
         """ Place a new file in the beacon directory. Will raise an exception if it fails."""
-        now = datetime.isoformat()
-        random_number = os.urandom(16).encode(hex)
+        now = datetime.datetime.now().isoformat()
+        random_number = os.urandom(16).encode('hex')
 
         beacon_filename = '%s---%s' % (now, random_number)
         partial_path = os.path.join(self.partial_beacon_path, beacon_filename)
         final_path = os.path.join(self.beacon_path, beacon_filename)
 
         try:
-            open(partial_path, 'a', mode=GROUP_RO_MODE).close()
+            open(partial_path, 'a').close()
             os.rename(partial_path, final_path)
 
         except Exception as exception:
-            self.logger.critical(
-                'Could not create beacon file for beacon %s for program %s. %s: %s.',
+            message = 'Could not create beacon file for beacon %s, program %s. %s:%s' % (
                 self.beacon_name, self.program_name, type(exception).__name__,
                 str(exception))
-            raise BeaconBroadcasterBroadcastException
+            self.logger.critical(message)
+            raise BeaconBroadcasterBroadcastException(message)
+
+        # TODO: Only keep a specific number of beacon files.
 
     def _set_directory_permissions(self, path, mode, uid, gid):
         try:
@@ -94,13 +97,14 @@ class BeaconBroadcaster(object):
             raise BeaconBroadcasterInitException
 
     def _create_directory(self, path):
+        path = os.path.abspath(path)
         if not os.path.isdir(path):
             try:
-                os.mkdir(path)
+                os.makedirs(path)
 
             except Exception as exception:
-                self.logger.critical(
-                    'Could not create directory %s for beacon %s for program %s. %s: %s.',
+                message = 'Could not create directory %s for beacon %s, program %s. %s:%s' % (
                     path, self.beacon_name, self.program_name,
                     type(exception).__name__, str(exception))
-                raise BeaconBroadcasterInitException
+                self.logger.critical(message)
+                raise BeaconBroadcasterInitException(message)

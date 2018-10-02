@@ -52,10 +52,14 @@ class BeaconReceiver(object):
         if time.time() > self.next_check_time:
             latest_beacon_time = self._read_beacon_time()
 
-            if latest_beacon_time >= self.last_beacon_time:
-                self.last_beacon_time = latest_beacon_time
+            if latest_beacon_time > self.last_beacon_time:
                 self.logger.debug('The beacon %s from program %s has been received.',
                                   self.beacon_name, self.program_name)
+                self.logger.debug('Updating last beacon time from %s to %s.',
+                                  self.last_beacon_time, latest_beacon_time)
+                self.last_beacon_time = latest_beacon_time
+
+                beacon_updated = True
 
             self.next_check_time = self.next_check_time + self.check_interval
         return beacon_updated
@@ -70,7 +74,7 @@ class BeaconReceiver(object):
         if os.path.isdir(self.beacon_path):
             if tmpfs.path_is_tmpfs_mountpoint(self.beacon_path):
                 file_list = os.listdir(self.beacon_path)
-                latest_file_name = sorted(file_list)[0]
+                latest_file_name = sorted(file_list, reverse=True)[0]
                 beacon_time = latest_file_name.split('---')[0]
 
         return beacon_time
