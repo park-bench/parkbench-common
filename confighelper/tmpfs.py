@@ -15,6 +15,8 @@
 
 """ Provides helper functions for tmpfs usage."""
 
+__all__ = ['mount_tmpfs', 'path_is_tmpfs_mountpoint', 'TmpfsMountError']
+
 import os
 import subprocess
 
@@ -22,8 +24,9 @@ class TmpfsMountError(Exception):
     """ Raised when a tmpfs mount operation appears to fail."""
 
 def path_is_tmpfs_mountpoint(path):
-    """ Checks that a path is mounted as tmpfs. Returns True if it is mounted, False if it
-    is not.
+    """ Checks that a path is mounted as tmpfs.
+
+    Returns True if it is mounted, False if it is not.
 
     path: The path to check
     """

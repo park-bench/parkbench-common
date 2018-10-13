@@ -15,6 +15,10 @@
 
 """ Provides the broadcasting component of a a filesystem-based IPC mechanism."""
 
+__all__ = ['BeaconBroadcasterBroadcastException',
+           'BeaconBroadcasterInitException',
+           'BeaconBroadcaster']
+
 import datetime
 import logging
 import os
@@ -28,13 +32,12 @@ RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
 BEACON_PATH = '/var/spool/'
 TMPFS_SIZE = '1M'
 
-class BeaconBroadcasterInitException(Exception):
-    """ This exception is raised when a BeaconBroadcaster object fails to initialize."""
-
 class BeaconBroadcasterBroadcastException(Exception):
     """ This exception is raised when a BeaconBroadcaster object fails to send a beacon."""
 
-# TODO: Change the name of this class to StatusBeacon.
+class BeaconBroadcasterInitException(Exception):
+    """ This exception is raised when a BeaconBroadcaster object fails to initialize."""
+
 class BeaconBroadcaster(object):
     """ Provides the broadcasting component of a filesystem-based IPC mechanism."""
 

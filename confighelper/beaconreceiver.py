@@ -20,6 +20,8 @@ import logging
 import time
 import tmpfs
 
+__all__ = ['BeaconCheckError', 'BeaconReceiver']
+
 BEACON_PATH = '/var/spool/'
 TMPFS_SIZE = '1M'
 
