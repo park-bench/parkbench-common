@@ -22,17 +22,17 @@ class TmpfsMountError(Exception):
     """ Raised when a tmpfs mount operation appears to fail."""
 
 def path_is_tmpfs_mountpoint(path):
-    """ Checks that a path is mounted as tmpfs.
+    """ Checks that a path is mounted as tmpfs. Returns True if it is mounted, False if it
+    is not.
 
     path: The path to check
     """
     path = os.path.abspath(path)
 
-    return 'none on {0} type tmpfs'.format(path) in \
-        str(subprocess.check_output('mount'))
+    return 'none on %s type tmpfs' % path in str(subprocess.check_output('mount'))
 
 def mount_tmpfs(path, size):
-    """ Mounts a tmpfs disk.
+    """ Mounts a tmpfs disk. Will raise exceptions if the mount fails.
 
     path: The path for the disk
     size: The size of the disk
@@ -41,10 +41,21 @@ def mount_tmpfs(path, size):
     path = os.path.abspath(path)
 
     if not path_is_tmpfs_mountpoint(path):
-        # TODO: Use the return code to raise appropriate exceptions.
-        return_code = subprocess.call(
-            ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+        if not os.path.isfile(path):
+            os.mkdir(path)
 
-    if not path_is_tmpfs_mountpoint(path):
-        raise TmpfsMountError(
-            'Could not mount tmpfs to %s. Mount return code was %s.' % (path, return_code))
+        if not os.path.isdir(path):
+            raise TmpfsMountError(
+                'Could not mount tmpfs on %s. %s is not a directory.' % (path, path))
+        else:
+            if not os.listdir(path) == []:
+                raise TmpfsMountError(
+                    'Could not mount tmpfs on %s. Directory is not empty.' % path)
+            else:
+                return_code = subprocess.call(
+                    ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+
+        if not path_is_tmpfs_mountpoint(path):
+            raise TmpfsMountError(
+                'Could not mount tmpfs on %s. Mount return code was %s.' % \
+                    (path, return_code))

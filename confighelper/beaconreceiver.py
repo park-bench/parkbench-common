@@ -21,6 +21,12 @@ import time
 import tmpfs
 
 BEACON_PATH = '/var/spool/'
+TMPFS_SIZE = '1M'
+
+class BeaconCheckError(Exception):
+    """ This exception is raised when an error is encountered while attempting to check a
+    beacon.
+    """
 
 class BeaconReceiver(object):
     """ Provides the receiving component of a filesystem-based IPC mechanism.
@@ -34,10 +40,13 @@ class BeaconReceiver(object):
 
         self.beacon_name = beacon_name
         self.program_name = program_name
-        self.beacon_path = '%s/%s/%s/' % (BEACON_PATH, program_name, beacon_name)
+        self.tmpfs_path = os.path.join(BEACON_PATH, program_name)
+        self.beacon_path = os.path.join(BEACON_PATH, program_name, beacon_name)
         self.last_beacon_time = None
         self.next_check_time = time.time()
         self.check_interval = check_interval
+
+        tmpfs.mount_tmpfs(self.tmpfs_path, TMPFS_SIZE)
 
         self.logger.info('The reciever for beacon %s from program %s has been initialized.',
                          beacon_name, program_name)
@@ -72,9 +81,12 @@ class BeaconReceiver(object):
         """
         beacon_time = None
         if os.path.isdir(self.beacon_path):
-            if tmpfs.path_is_tmpfs_mountpoint(self.beacon_path):
+            if tmpfs.path_is_tmpfs_mountpoint(self.tmpfs_path):
                 file_list = os.listdir(self.beacon_path)
                 latest_file_name = sorted(file_list, reverse=True)[0]
                 beacon_time = latest_file_name.split('---')[0]
+
+            else:
+                raise BeaconCheckError('%s is not a tmpfs mountpoint.' % self.beacon_path)
 
         return beacon_time

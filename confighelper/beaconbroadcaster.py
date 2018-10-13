@@ -52,12 +52,12 @@ class BeaconBroadcaster(object):
         self.program_name = program_name
         self.beacon_name = beacon_name
 
+        # TODO: Make tmpfs.py report errors properly.
+        tmpfs_path = os.path.join(BEACON_PATH, program_name)
+        tmpfs.mount_tmpfs(tmpfs_path, TMPFS_SIZE)
+
         self._create_directory(self.beacon_path)
         self._set_directory_permissions(self.beacon_path, GROUP_RW_MODE, uid, gid)
-
-        # TODO: Make tmpfs.py report errors properly.
-        # TODO: Mount on /var/spool/program_name/ramdisk, not on self.beacon_directory.
-        tmpfs.mount_tmpfs(self.beacon_path, TMPFS_SIZE)
 
     def send(self):
         """ Place a new file in the beacon directory. Will raise an exception if it fails."""
