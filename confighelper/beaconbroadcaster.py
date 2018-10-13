@@ -34,6 +34,7 @@ class BeaconBroadcasterInitException(Exception):
 class BeaconBroadcasterBroadcastException(Exception):
     """ This exception is raised when a BeaconBroadcaster object fails to send a beacon."""
 
+# TODO: Change the name of this class to StatusBeacon.
 class BeaconBroadcaster(object):
     """ Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
@@ -48,7 +49,6 @@ class BeaconBroadcaster(object):
 
         self.logger = logging.getLogger(__name__)
         self.beacon_path = '%s/%s/%s/' % (BEACON_PATH, program_name, beacon_name)
-        self.partial_beacon_path = '%s/partial/' % self.beacon_path
         self.program_name = program_name
         self.beacon_name = beacon_name
 
@@ -59,21 +59,20 @@ class BeaconBroadcaster(object):
         # TODO: Mount on /var/spool/program_name/ramdisk, not on self.beacon_directory.
         tmpfs.mount_tmpfs(self.beacon_path, TMPFS_SIZE)
 
-        self._create_directory(self.partial_beacon_path)
-        self._set_directory_permissions(self.partial_beacon_path, RW_MODE, uid, gid)
-
     def send(self):
         """ Place a new file in the beacon directory. Will raise an exception if it fails."""
         now = datetime.datetime.now().isoformat()
         random_number = os.urandom(16).encode('hex')
 
         beacon_filename = '%s---%s' % (now, random_number)
-        partial_path = os.path.join(self.partial_beacon_path, beacon_filename)
         final_path = os.path.join(self.beacon_path, beacon_filename)
 
         try:
-            open(partial_path, 'a').close()
-            os.rename(partial_path, final_path)
+            previous_beacons = os.listdir(self.beacon_path)
+            open(final_path, 'a').close()
+
+            for beacon_file in previous_beacons:
+                os.remove(os.path.join(self.beacon_path, beacon_file))
 
         except Exception as exception:
             message = 'Could not create beacon file for beacon %s, program %s. %s:%s' % (
@@ -81,8 +80,6 @@ class BeaconBroadcaster(object):
                 str(exception))
             self.logger.critical(message)
             raise BeaconBroadcasterBroadcastException(message)
-
-        # TODO: Only keep a specific number of beacon files.
 
     def _set_directory_permissions(self, path, mode, uid, gid):
         try:
