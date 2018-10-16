@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Provides the broadcasting component of a a filesystem-based IPC mechanism."""
+""" Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
-__all__ = ['BeaconBroadcasterBroadcastException',
-           'BeaconBroadcasterInitException',
-           'BeaconBroadcaster']
+__all__ = ['BroadcasterBroadcastException',
+           'BroadcasterInitException',
+           'Broadcaster']
 
 import datetime
 import logging
@@ -29,68 +29,68 @@ GROUP_RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXGRP | stat
 GROUP_RO_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IRGRP
 RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
 
-BEACON_PATH = '/var/spool/'
+BROADCAST_PATH = '/var/spool/'
 TMPFS_SIZE = '1M'
 
-class BeaconBroadcasterBroadcastException(Exception):
-    """ This exception is raised when a BeaconBroadcaster object fails to send a beacon."""
+class BroadcasterBroadcastException(Exception):
+    """ This exception is raised when a BeaconBroadcaster object fails to issue a broadcast."""
 
-class BeaconBroadcasterInitException(Exception):
+class BroadcasterInitException(Exception):
     """ This exception is raised when a BeaconBroadcaster object fails to initialize."""
 
-class BeaconBroadcaster(object):
+class Broadcaster(object):
     """ Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
-    def __init__(self, program_name, beacon_name, uid, gid):
-        """ Initial configuration of the beacon directory. This must be done as root.
+    def __init__(self, program_name, broadcast_name, uid, gid):
+        """ Initial configuration of the broadcast directory. This must be done as root.
 
-        program_name: The name of the program broadcasting the beacon.
-        beacon_name: The name of the beacon to broadcast.
+        program_name: The name of the program issuing the broadcast.
+        broadcast_name: The name of the broadcast to issue.
         uid: The UID of the calling program
         gid: The GID of the calling program
         """
 
         self.logger = logging.getLogger(__name__)
 
-        self.logger.debug("Initializing broadcaster for beacon %s from program %s.",
-                          beacon_name, program_name)
+        self.logger.debug("Initializing broadcaster for broadcast %s from program %s.",
+                          broadcast_name, program_name)
 
-        self.beacon_path = os.path.join(BEACON_PATH, program_name, beacon_name)
+        self.broadcast_path = os.path.join(BROADCAST_PATH, program_name, broadcast_name)
         self.program_name = program_name
-        self.beacon_name = beacon_name
+        self.broadcast_name = broadcast_name
 
-        tmpfs_path = os.path.join(BEACON_PATH, program_name)
+        tmpfs_path = os.path.join(BROADCAST_PATH, program_name)
         tmpfs.mount_tmpfs(tmpfs_path, TMPFS_SIZE)
 
-        self._create_directory(self.beacon_path)
-        self._set_file_permissions(self.beacon_path, GROUP_RW_MODE, uid, gid)
+        self._create_directory(self.broadcast_path)
+        self._set_file_permissions(self.broadcast_path, GROUP_RW_MODE, uid, gid)
 
         self.logger.info("Broadcaster for eacon %s from program %s initialized.",
-                         beacon_name, program_name)
+                         broadcast_name, program_name)
 
-    def send(self):
-        """ Place a new file in the beacon directory. Will raise an exception if it fails."""
+    def issue(self):
+        """ Place a new file in the broadcast directory. Will raise an exception if it fails."""
         self.logger.info(
-            "Sending beacon %s for program %s.", self.beacon_name, self.program_name)
+            "Sending broadcast %s for program %s.", self.broadcast_name, self.program_name)
         now = datetime.datetime.now().isoformat()
         random_number = os.urandom(16).encode('hex')
 
-        beacon_filename = '%s---%s' % (now, random_number)
-        final_path = os.path.join(self.beacon_path, beacon_filename)
+        broadcast_filename = '%s---%s' % (now, random_number)
+        final_path = os.path.join(self.broadcast_path, broadcast_filename)
 
         try:
-            previous_beacons = os.listdir(self.beacon_path)
+            previous_broadcasts = os.listdir(self.broadcast_path)
             open(final_path, 'a').close()
 
-            for beacon_file in previous_beacons:
-                os.remove(os.path.join(self.beacon_path, beacon_file))
+            for broadcast_file in previous_broadcasts:
+                os.remove(os.path.join(self.broadcast_path, broadcast_file))
 
         except Exception as exception:
-            message = 'Could not create beacon file for beacon %s, program %s. %s:%s' % (
-                self.beacon_name, self.program_name, type(exception).__name__,
+            message = 'Could not create broadcast file for broadcast %s, program %s. %s:%s' % (
+                self.broadcast_name, self.program_name, type(exception).__name__,
                 str(exception))
             self.logger.critical(message)
-            raise BeaconBroadcasterBroadcastException(message)
+            raise BroadcasterBroadcastException(message)
 
     def _set_file_permissions(self, path, mode, uid, gid):
         """ Sets permissions for a file. Will raise an exception if it fails.
@@ -106,10 +106,10 @@ class BeaconBroadcaster(object):
             os.chmod(path, mode)
 
         except Exception as exception:
-            self.logger.critical('Could not set permissions for file %s for beacon %s for'
-                                 'program %s. %s: %s.', path, self.beacon_name,
+            self.logger.critical('Could not set permissions for file %s for broadcast %s for'
+                                 'program %s. %s: %s.', path, self.broadcast_name,
                                  self.program_name, type(exception).__name__, str(exception))
-            raise BeaconBroadcasterInitException
+            raise BroadcasterInitException
 
     def _create_directory(self, path):
         """ Create a directory while handling errors. Will raise an exception if it fails.
@@ -122,8 +122,8 @@ class BeaconBroadcaster(object):
                 os.makedirs(path)
 
             except Exception as exception:
-                message = 'Could not create directory %s for beacon %s, program %s. %s:%s' % (
-                    path, self.beacon_name, self.program_name,
+                message = 'Could not create directory %s for broadcast %s, program %s. %s:%s' % (
+                    path, self.broadcast_name, self.program_name,
                     type(exception).__name__, str(exception))
                 self.logger.critical(message)
-                raise BeaconBroadcasterInitException(message)
+                raise BroadcasterInitException(message)

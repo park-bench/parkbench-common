@@ -15,6 +15,6 @@
 
 """parkbenchcommon is a support package for Parkbench projects."""
 
-__all__ = ['beaconbroadcaster', 'beaconreceiver', 'confighelper', 'tmpfs']
+__all__ = ['broadcaster', 'broadcastconsumer', 'confighelper', 'tmpfs']
 __author__ = 'Joel Luellwitz and Andrew Klapp'
 __version__ = '0.8'
