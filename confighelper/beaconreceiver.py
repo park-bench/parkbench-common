@@ -39,6 +39,8 @@ class BeaconReceiver(object):
     """
     def __init__(self, program_name, beacon_name, check_interval):
         self.logger = logging.getLogger(__name__)
+        self.logger.debug("Initializing reciever for beacon %s from program %s.",
+                          beacon_name, program_name)
 
         self.beacon_name = beacon_name
         self.program_name = program_name
@@ -64,8 +66,8 @@ class BeaconReceiver(object):
             latest_beacon_time = self._read_beacon_time()
 
             if latest_beacon_time > self.last_beacon_time:
-                self.logger.debug('The beacon %s from program %s has been received.',
-                                  self.beacon_name, self.program_name)
+                self.logger.info('The beacon %s from program %s has been received.',
+                                 self.beacon_name, self.program_name)
                 self.logger.debug('Updating last beacon time from %s to %s.',
                                   self.last_beacon_time, latest_beacon_time)
                 self.last_beacon_time = latest_beacon_time

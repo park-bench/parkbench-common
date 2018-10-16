@@ -35,7 +35,9 @@ def path_is_tmpfs_mountpoint(path):
     return 'none on %s type tmpfs' % path in str(subprocess.check_output('mount'))
 
 def mount_tmpfs(path, size):
-    """ Mounts a tmpfs disk. Will raise exceptions if the mount fails.
+    """ Mounts a tmpfs disk. Will raise an exception if the mount fails.
+
+    Does not return anything.
 
     path: The path for the disk
     size: The size of the disk
@@ -58,7 +60,7 @@ def mount_tmpfs(path, size):
                 return_code = subprocess.call(
                     ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
 
-        if not path_is_tmpfs_mountpoint(path):
-            raise TmpfsMountError(
-                'Could not mount tmpfs on %s. Mount return code was %s.' % \
-                    (path, return_code))
+                if not path_is_tmpfs_mountpoint(path):
+                    raise TmpfsMountError(
+                        'Could not mount tmpfs on %s. Mount return code was %s.' % \
+                            (path, return_code))

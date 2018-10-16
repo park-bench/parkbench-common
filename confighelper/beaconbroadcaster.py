@@ -51,19 +51,27 @@ class BeaconBroadcaster(object):
         """
 
         self.logger = logging.getLogger(__name__)
-        self.beacon_path = '%s/%s/%s/' % (BEACON_PATH, program_name, beacon_name)
+
+        self.logger.debug("Initializing broadcaster for beacon %s from program %s.",
+                          beacon_name, program_name)
+
+        self.beacon_path = os.path.join(BEACON_PATH, program_name, beacon_name)
         self.program_name = program_name
         self.beacon_name = beacon_name
 
-        # TODO: Make tmpfs.py report errors properly.
         tmpfs_path = os.path.join(BEACON_PATH, program_name)
         tmpfs.mount_tmpfs(tmpfs_path, TMPFS_SIZE)
 
         self._create_directory(self.beacon_path)
-        self._set_directory_permissions(self.beacon_path, GROUP_RW_MODE, uid, gid)
+        self._set_file_permissions(self.beacon_path, GROUP_RW_MODE, uid, gid)
+
+        self.logger.info("Broadcaster for eacon %s from program %s initialized.",
+                         beacon_name, program_name)
 
     def send(self):
         """ Place a new file in the beacon directory. Will raise an exception if it fails."""
+        self.logger.info(
+            "Sending beacon %s for program %s.", self.beacon_name, self.program_name)
         now = datetime.datetime.now().isoformat()
         random_number = os.urandom(16).encode('hex')
 
@@ -84,7 +92,14 @@ class BeaconBroadcaster(object):
             self.logger.critical(message)
             raise BeaconBroadcasterBroadcastException(message)
 
-    def _set_directory_permissions(self, path, mode, uid, gid):
+    def _set_file_permissions(self, path, mode, uid, gid):
+        """ Sets permissions for a file. Will raise an exception if it fails.
+
+        path: The file to modify
+        mode: The mode to set
+        uid: The owner to set
+        gid: The group to set
+        """
         try:
             os.chown(path, uid, gid)
             # Set permissions to xrw-------
@@ -97,6 +112,10 @@ class BeaconBroadcaster(object):
             raise BeaconBroadcasterInitException
 
     def _create_directory(self, path):
+        """ Create a directory while handling errors. Will raise an exception if it fails.
+
+        path: The directory to create
+        """
         path = os.path.abspath(path)
         if not os.path.isdir(path):
             try:
