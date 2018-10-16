@@ -1,4 +1,4 @@
-Source: confighelper
+Source: parkbench-common
 Section: parkbench
 Priority: required
 Maintainer: eviljoel, Andrew Klapp

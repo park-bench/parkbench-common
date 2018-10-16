@@ -13,12 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: Rename this package to parkbench-common.
-"""confighelper is a support module for Parkbench projects."""
-
-# TODO: This isn't done correctly, but removing it will break other projects right now.
-from .confighelper import ConfigHelper
-from .confighelper import ValidationException
+"""parkbenchcommon is a support package for Parkbench projects."""
 
 __all__ = ['beaconbroadcaster', 'beaconreceiver', 'confighelper', 'tmpfs']
 __author__ = 'Joel Luellwitz and Andrew Klapp'

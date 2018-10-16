@@ -2,12 +2,12 @@
 
 import logging
 import time
-import confighelper.beaconreceiver
+import parkbenchcommon.beaconreceiver
 
 logging.basicConfig(level=logging.DEBUG)
 print(logging.handlers)
 
-receiver = confighelper.beaconreceiver.BeaconReceiver('test_program', 'test_beacon', 1)
+receiver = parkbenchcommon.beaconreceiver.BeaconReceiver('test_program', 'test_beacon', 1)
 
 while True:
     if receiver.check():

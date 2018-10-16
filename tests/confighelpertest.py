@@ -23,8 +23,7 @@ __version__ = '0.8'
 import ConfigParser
 import logging
 import unittest
-import confighelper
-from confighelper import ValidationException
+from parkbenchcommon import confighelper
 
 CONFIG_FILE_PATH = './tests/data/config.txt'
 
@@ -50,11 +49,11 @@ class ConfigHelperTest(unittest.TestCase):
         self.assertEqual(1, result)
 
     def test_integer_rejects_float(self):
-        with self.assertRaises(ValidationException):
+        with self.assertRaises(confighelper.ValidationException):
             self.config_helper.verify_integer_exists(self.config_file, 'float_point5')
 
     def test_int_is_below_lower_bound(self):
-        with self.assertRaises(ValidationException):
+        with self.assertRaises(confighelper.ValidationException):
             self.config_helper.verify_integer_within_range(
                 self.config_file, 'int_negative_12', lower_bound=-11)
 
@@ -64,7 +63,7 @@ class ConfigHelperTest(unittest.TestCase):
         self.assertEquals(30, result)
 
     def test_int_is_above_upper_bound(self):
-        with self.assertRaises(ValidationException):
+        with self.assertRaises(confighelper.ValidationException):
             self.config_helper.verify_integer_within_range(
                 self.config_file, 'int_30', upper_bound=30)
 
@@ -79,7 +78,7 @@ class ConfigHelperTest(unittest.TestCase):
         self.assertEquals(1, result)
 
     def test_float_is_below_lower_bound(self):
-        with self.assertRaises(ValidationException):
+        with self.assertRaises(confighelper.ValidationException):
             self.config_helper.verify_number_within_range(
                 self.config_file, 'float_negative_1point5', lower_bound=1.6)
 
@@ -89,7 +88,7 @@ class ConfigHelperTest(unittest.TestCase):
         self.assertEquals(30.5, result)
 
     def test_float_is_above_upper_bound(self):
-        with self.assertRaises(ValidationException):
+        with self.assertRaises(confighelper.ValidationException):
             self.config_helper.verify_number_within_range(
                 self.config_file, 'float_30point5', upper_bound=30.5)
 

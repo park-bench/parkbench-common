@@ -1,8 +1,8 @@
 #!/usr/bin/python2
 
-import confighelper.beaconbroadcaster
+import parkbenchcommon.beaconbroadcaster
 
-broadcaster = confighelper.beaconbroadcaster.BeaconBroadcaster(
+broadcaster = parkbenchcommon.beaconbroadcaster.BeaconBroadcaster(
     'test_program', 'test_beacon', 1000, 1000)
 
 broadcaster.send()
