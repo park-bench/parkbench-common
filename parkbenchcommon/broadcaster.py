@@ -25,11 +25,6 @@ import os
 import stat
 import tmpfs
 
-GROUP_RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXGRP | stat.S_IRGRP
-GROUP_RO_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IRGRP
-RW_MODE = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
-
-BROADCAST_PATH = '/var/spool/'
 TMPFS_SIZE = '1M'
 
 class BroadcasterBroadcastException(Exception):
@@ -55,15 +50,18 @@ class Broadcaster(object):
         self.logger.debug("Initializing broadcaster for broadcast %s from program %s.",
                           broadcast_name, program_name)
 
-        self.broadcast_path = os.path.join(BROADCAST_PATH, program_name, broadcast_name)
+
+        broadcast_path = '/var/spool/'
+        self.broadcast_path = os.path.join(broadcast_path, program_name, broadcast_name)
         self.program_name = program_name
         self.broadcast_name = broadcast_name
 
-        tmpfs_path = os.path.join(BROADCAST_PATH, program_name)
+        tmpfs_path = os.path.join(broadcast_path, program_name)
         tmpfs.mount_tmpfs(tmpfs_path, TMPFS_SIZE)
 
         self._create_directory(self.broadcast_path)
-        self._set_file_permissions(self.broadcast_path, GROUP_RW_MODE, uid, gid)
+        group_rw_mode = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXGRP | stat.S_IRGRP
+        self._set_file_permissions(self.broadcast_path, group_rw_mode, uid, gid)
 
         self.logger.info("Broadcaster for eacon %s from program %s initialized.",
                          broadcast_name, program_name)
