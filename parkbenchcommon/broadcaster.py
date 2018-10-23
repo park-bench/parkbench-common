@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Provides the broadcasting component of a filesystem-based IPC mechanism."""
+"""Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
 __all__ = ['BroadcasterBroadcastException',
            'BroadcasterInitException',
@@ -23,26 +23,29 @@ import datetime
 import logging
 import os
 import stat
+import traceback
 import tmpfs
 
 TMPFS_SIZE = '1M'
 
 class BroadcasterBroadcastException(Exception):
-    """ This exception is raised when a BeaconBroadcaster object fails to issue a broadcast."""
+    """This exception is raised when a BeaconBroadcaster object fails to issue a broadcast."""
 
 class BroadcasterInitException(Exception):
-    """ This exception is raised when a BeaconBroadcaster object fails to initialize."""
+    """This exception is raised when a BeaconBroadcaster object fails to initialize."""
 
 class Broadcaster(object):
-    """ Provides the broadcasting component of a filesystem-based IPC mechanism."""
+    """Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
     def __init__(self, program_name, broadcast_name, uid, gid):
-        """ Initial configuration of the broadcast directory. This must be done as root.
+        """Initial configuration of the broadcast directory. This must be done as root. This
+        method creates any necessary spool directories, sets their permissions, and mounts a
+        ramdisk if necessary.
 
         program_name: The name of the program issuing the broadcast.
         broadcast_name: The name of the broadcast to issue.
-        uid: The UID of the calling program
-        gid: The GID of the calling program
+        uid: The UID of the calling program.
+        gid: The GID of the calling program.
         """
 
         self.logger = logging.getLogger(__name__)
@@ -60,6 +63,7 @@ class Broadcaster(object):
         tmpfs.mount_tmpfs(tmpfs_path, TMPFS_SIZE)
 
         self._create_directory(self.broadcast_path)
+        # Set permissions to xrw-------
         group_rw_mode = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXGRP | stat.S_IRGRP
         self._set_file_permissions(self.broadcast_path, group_rw_mode, uid, gid)
 
@@ -67,7 +71,7 @@ class Broadcaster(object):
                          broadcast_name, program_name)
 
     def issue(self):
-        """ Place a new file in the broadcast directory. Will raise an exception if it fails."""
+        """Place a new file in the broadcast directory. Will raise an exception if it fails."""
         self.logger.info(
             "Sending broadcast %s for program %s.", self.broadcast_name, self.program_name)
         now = datetime.datetime.now().isoformat()
@@ -84,35 +88,40 @@ class Broadcaster(object):
                 os.remove(os.path.join(self.broadcast_path, broadcast_file))
 
         except Exception as exception:
-            message = 'Could not create broadcast file for broadcast %s, program %s. %s:%s' % (
-                self.broadcast_name, self.program_name, type(exception).__name__,
-                str(exception))
+            message = \
+                'Could not create broadcast file for broadcast %s, program %s. %s:%s\n%s' \
+                % (self.broadcast_name, self.program_name, type(exception).__name__,
+                   str(exception), traceback.format_exc())
             self.logger.critical(message)
+            # TODO: Implement exception chaining when we move to Python 3.
             raise BroadcasterBroadcastException(message)
 
     def _set_file_permissions(self, path, mode, uid, gid):
-        """ Sets permissions for a file. Will raise an exception if it fails.
+        """Sets permissions for a file. Will raise an exception if it fails.
 
-        path: The file to modify
-        mode: The mode to set
-        uid: The owner to set
-        gid: The group to set
+        path: The file to modify.
+        mode: The mode to set.
+        uid: The owner to set.
+        gid: The group to set.
         """
         try:
             os.chown(path, uid, gid)
-            # Set permissions to xrw-------
             os.chmod(path, mode)
 
         except Exception as exception:
-            self.logger.critical('Could not set permissions for file %s for broadcast %s for'
-                                 'program %s. %s: %s.', path, self.broadcast_name,
-                                 self.program_name, type(exception).__name__, str(exception))
-            raise BroadcasterInitException
+            message = \
+                'Could not set permissions for file %s for broadcast %s for program %s. ' \
+                '%s: %s\n%s' % (path, self.broadcast_name, self.program_name,
+                                type(exception).__name__, str(exception),
+                                traceback.format_exc())
+            self.logger.error(message)
+            # TODO: Implement exception chaining when we move to Python 3.
+            raise BroadcasterInitException(message)
 
     def _create_directory(self, path):
-        """ Create a directory while handling errors. Will raise an exception if it fails.
+        """Create a directory while handling errors. Will raise an exception if it fails.
 
-        path: The directory to create
+        path: The directory to create.
         """
         path = os.path.abspath(path)
         if not os.path.isdir(path):
@@ -120,8 +129,10 @@ class Broadcaster(object):
                 os.makedirs(path)
 
             except Exception as exception:
-                message = 'Could not create directory %s for broadcast %s, program %s. %s:%s' % (
-                    path, self.broadcast_name, self.program_name,
-                    type(exception).__name__, str(exception))
+                message = \
+                    'Could not create directory %s for broadcast %s, program %s. %s:%s\n%s' \
+                    % (path, self.broadcast_name, self.program_name,
+                       type(exception).__name__, str(exception), traceback.format_exc())
                 self.logger.critical(message)
+                # TODO: Implement exception chaining when we move to Python 3.
                 raise BroadcasterInitException(message)

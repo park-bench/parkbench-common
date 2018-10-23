@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Provides the consuming component of a filesystem-based IPC mechanism."""
+"""Provides the consuming component of a filesystem-based IPC mechanism."""
 
 import os
 import logging
@@ -26,16 +26,16 @@ BROADCAST_PATH = '/var/spool/'
 TMPFS_SIZE = '1M'
 
 class BroadcastCheckError(Exception):
-    """ This exception is raised when an error is encountered while attempting to check a
+    """This exception is raised when an error is encountered while attempting to check a
     broadcast.
     """
 
 class BroadcastConsumer(object):
-    """ Provides the consuming component of a filesystem-based IPC mechanism.
+    """Provides the consuming component of a filesystem-based IPC mechanism.
 
-    program_name: The name of the program that broadcasts this broadcast
-    broadcast_name: The name of this broadcast
-    check_intveral: The number of seconds to wait in between re-reading the filesystem
+    program_name: The name of the program that broadcasts this broadcast.
+    broadcast_name: The name of this broadcast.
+    check_interval: The number of seconds to wait in between re-reading the filesystem.
     """
     def __init__(self, program_name, broadcast_name, check_interval):
         self.logger = logging.getLogger(__name__)
@@ -57,12 +57,25 @@ class BroadcastConsumer(object):
             broadcast_name, program_name)
 
     def check(self):
-        """ Check if a new broadcast has been issued.
+        """Check if a new broadcast has been issued.
 
         Returns True if a new broadcast has been issued. Returns False otherwise.
         """
         broadcast_updated = False
 
+        # TODO: This isn't what was intended. Rework as follows.
+        # read_broadcast_time
+        # if broadcast_time == None:
+        #   pass
+        # else
+        #   if broadcast_time > now()
+        #       warn
+        #   else
+        #       if next_check_time < now():
+        #          broadcast_updated = True
+        #          next_check_time = now() + check_interval
+
+        
         if time.time() > self.next_check_time:
             latest_broadcast_time = self._read_broadcast_time()
 
@@ -79,17 +92,21 @@ class BroadcastConsumer(object):
         return broadcast_updated
 
     def _read_broadcast_time(self):
-        """ Retrieve the most recent time on which a broadcast has been written.
+        """Retrieve the most recent time on which a broadcast has been written.
 
         Returns an ISO formatted timestamp if a broadcast file exists. If no files exist,
         None is returned.
         """
         broadcast_time = None
+
         if os.path.isdir(self.broadcast_path):
             if tmpfs.path_is_tmpfs_mountpoint(self.tmpfs_path):
                 file_list = os.listdir(self.broadcast_path)
                 latest_file_name = sorted(file_list, reverse=True)[0]
                 broadcast_time = latest_file_name.split('---')[0]
+                ## TODO: update this as follows.
+                # if current_broadcast_time != last_broadcast_time:
+                #   broadcast_time = current_broadcast_time
 
             else:
                 raise BroadcastCheckError('%s is not a tmpfs mountpoint.' % self.tmpfs_path)
