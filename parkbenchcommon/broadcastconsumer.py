@@ -15,6 +15,7 @@
 
 """Provides the consuming component of a filesystem-based IPC mechanism."""
 
+import datetime
 import os
 import logging
 import time
@@ -63,39 +64,28 @@ class BroadcastConsumer(object):
         """
         broadcast_updated = False
 
-        # TODO: This isn't what was intended. Rework as follows.
-        # read_broadcast_time
-        # if broadcast_time == None:
-        #   pass
-        # else
-        #   if broadcast_time > now()
-        #       warn
-        #   else
-        #       if next_check_time < now():
-        #          broadcast_updated = True
-        #          next_check_time = now() + check_interval
+        latest_broadcast_time = self._read_broadcast_time()
 
-        
-        if time.time() > self.next_check_time:
-            latest_broadcast_time = self._read_broadcast_time()
+        if latest_broadcast_time is not None:
+            if latest_broadcast_time > datetime.datetime.now().isoformat():
+                self.logger.warning('Read a broadcast from the future and ignoring it.')
 
-            if latest_broadcast_time > self.last_broadcast_time:
-                self.logger.info('The broadcast %s from program %s has been consumed.',
-                                 self.broadcast_name, self.program_name)
-                self.logger.debug('Updating last broadcast time from %s to %s.',
-                                  self.last_broadcast_time, latest_broadcast_time)
-                self.last_broadcast_time = latest_broadcast_time
+            else:
+                if self.next_check_time < time.time():
+                    self.logger.info('The broadcast %s from program %s has been consumed.',
+                                     self.broadcast_name, self.program_name)
+                    self.logger.debug('Updating last broadcast time from %s to %s.',
+                                      self.last_broadcast_time, latest_broadcast_time)
+                    broadcast_updated = True
+                    self.next_check_time = time.time() + self.check_interval
 
-                broadcast_updated = True
-
-            self.next_check_time = self.next_check_time + self.check_interval
         return broadcast_updated
 
     def _read_broadcast_time(self):
         """Retrieve the most recent time on which a broadcast has been written.
 
-        Returns an ISO formatted timestamp if a broadcast file exists. If no files exist,
-        None is returned.
+        Returns an ISO formatted timestamp if a new broadcast file exists. Otherwise, None
+        is returned.
         """
         broadcast_time = None
 
@@ -103,10 +93,11 @@ class BroadcastConsumer(object):
             if tmpfs.path_is_tmpfs_mountpoint(self.tmpfs_path):
                 file_list = os.listdir(self.broadcast_path)
                 latest_file_name = sorted(file_list, reverse=True)[0]
-                broadcast_time = latest_file_name.split('---')[0]
-                ## TODO: update this as follows.
-                # if current_broadcast_time != last_broadcast_time:
-                #   broadcast_time = current_broadcast_time
+                current_broadcast_time = latest_file_name.split('---')[0]
+
+                if current_broadcast_time != self.last_broadcast_time:
+                    broadcast_time = current_broadcast_time
+                    self.last_broadcast_time = current_broadcast_time
 
             else:
                 raise BroadcastCheckError('%s is not a tmpfs mountpoint.' % self.tmpfs_path)
