@@ -11,18 +11,18 @@ Bug fixes are welcome!
 
 ## Included modules
 
-### Confighelper
-`Confighelper` is a helper class for `ConfigParser`. It includes expanded option validation,
+### ConfigHelper
+`ConfigHelper` is a helper class for `ConfigParser`. It includes expanded option validation,
 and makes some assumptions specific to Parkbench projects.
 
 ### Tmpfs
-`tmpfs` is a very simple module for mounting and checking tmpfs filesystems.
+`tmpfs` is a very simple module for mounting tmpfs filesystems.
 
-### Beaconbroadcaster
-`beaconbroadcaster` provides the broadcasting component for beacons, a filesystem-based IPC.
+### Broadcaster
+`Broadcaster` provides the broadcasting component for broadcasts, a filesystem-based IPC.
 
-### Beaconreceiever
-`beaconreceiver` provides the receiving component for beacons, a filesystem-based IPC.
+### BroadcastConsumer
+`BroadcastConsumer` provides the receiving component for broadcasts, a filesystem-based IPC.
 
 ## Prerequisites
 
@@ -31,8 +31,8 @@ installing a Debian package. The rest of these instructions make the following a
 
 *   This package is intended to run on Ubuntu 18.04 LTS. (Other operating systems may work,
     but are not supported.)
-*   `debhelper`, `dh-python`, `python-all`, and `python-setuptools` are installed on your build
-    server.
+*   `debhelper`, `dh-python`, `python-all`, and `python-setuptools` are installed on your
+    build server.
 *   You are already familiar with using a Linux terminal.
 *   You are familiar with using `git` and GitHub.
 *   You are already somewhat familiar with using `debuild`.

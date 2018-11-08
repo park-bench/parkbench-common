@@ -18,7 +18,7 @@
 import setuptools
 
 setuptools.setup(name='parkbenchcommon',
-                 description='Miscellaneous Parkbench utilities',
+                 description='Common Parkbench libraries',
                  author='Joel Allen Luellwitz and Andrew Klapp',
                  author_email='eviljoel@linux.com, andklapp@null.net',
                  license='GPLv3',

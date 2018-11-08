@@ -1,4 +1,4 @@
-# Copyright 2017-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 
 """Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
-__all__ = ['BroadcasterBroadcastException',
+__all__ = ['BroadcasterIssueException',
            'BroadcasterInitException',
            'Broadcaster']
 
@@ -26,21 +26,22 @@ import stat
 import traceback
 import tmpfs
 
+SPOOL_PATH = '/var/spool'
 TMPFS_SIZE = '1M'
 
-class BroadcasterBroadcastException(Exception):
-    """This exception is raised when a BeaconBroadcaster object fails to issue a broadcast."""
+class BroadcasterIssueException(Exception):
+    """This exception is raised when a Broadcaster object fails to issue a broadcast."""
 
 class BroadcasterInitException(Exception):
-    """This exception is raised when a BeaconBroadcaster object fails to initialize."""
+    """This exception is raised when a Broadcaster object fails to initialize."""
 
 class Broadcaster(object):
     """Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
     def __init__(self, program_name, broadcast_name, uid, gid):
         """Initial configuration of the broadcast directory. This must be done as root. This
-        method creates any necessary spool directories, sets their permissions, and mounts a
-        ramdisk if necessary.
+        constructor mounts a ramdisk and creates any necessary spool rirectories with
+        proper permissions.
 
         program_name: The name of the program issuing the broadcast.
         broadcast_name: The name of the broadcast to issue.
@@ -49,60 +50,61 @@ class Broadcaster(object):
         """
 
         self.logger = logging.getLogger(__name__)
-
         self.logger.debug("Initializing broadcaster for broadcast %s from program %s.",
                           broadcast_name, program_name)
 
-
-        broadcast_path = '/var/spool/'
-        self.broadcast_path = os.path.join(broadcast_path, program_name, broadcast_name)
+        self.broadcast_path = os.path.join(SPOOL_PATH, program_name, broadcast_name)
         self.program_name = program_name
         self.broadcast_name = broadcast_name
 
-        tmpfs_path = os.path.join(broadcast_path, program_name)
+        tmpfs_path = os.path.join(SPOOL_PATH, program_name)
         tmpfs.mount_tmpfs(tmpfs_path, TMPFS_SIZE)
 
         self._create_directory(self.broadcast_path)
-        # Set permissions to xrw-------
-        group_rw_mode = stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXGRP | stat.S_IRGRP
+        # Set permissions to drwxr-x---
+        group_rw_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | \
+            stat.S_IXGRP
         self._set_file_permissions(self.broadcast_path, group_rw_mode, uid, gid)
 
-        self.logger.info("Broadcaster for eacon %s from program %s initialized.",
+        self.logger.info("Broadcaster %s from program %s initialized.",
                          broadcast_name, program_name)
 
     def issue(self):
-        """Place a new file in the broadcast directory. Will raise an exception if it fails."""
+        """Issues a new broadcast overriding any prior broadcast. Will raise an exception if
+        it fails.
+        """
         self.logger.info(
-            "Sending broadcast %s for program %s.", self.broadcast_name, self.program_name)
+            "Issuing broadcast %s for program %s.", self.broadcast_name, self.program_name)
         now = datetime.datetime.now().isoformat()
         random_number = os.urandom(16).encode('hex')
 
-        broadcast_filename = '%s---%s' % (now, random_number)
-        final_path = os.path.join(self.broadcast_path, broadcast_filename)
+        broadcast_filename = '%s-%s' % (now, random_number)
+        broadcast_pathname = os.path.join(self.broadcast_path, broadcast_filename)
 
         try:
             previous_broadcasts = os.listdir(self.broadcast_path)
-            open(final_path, 'a').close()
+            open(broadcast_pathname, 'a').close()
 
             for broadcast_file in previous_broadcasts:
                 os.remove(os.path.join(self.broadcast_path, broadcast_file))
 
         except Exception as exception:
             message = \
-                'Could not create broadcast file for broadcast %s, program %s. %s:%s\n%s' \
+                'Could not create broadcast file for broadcast %s, program %s. %s: %s\n%s' \
                 % (self.broadcast_name, self.program_name, type(exception).__name__,
                    str(exception), traceback.format_exc())
-            self.logger.critical(message)
+            self.logger.error(message)
             # TODO: Implement exception chaining when we move to Python 3.
-            raise BroadcasterBroadcastException(message)
+            raise BroadcasterIssueException(message)
 
     def _set_file_permissions(self, path, mode, uid, gid):
         """Sets permissions for a file. Will raise an exception if it fails.
 
-        path: The file to modify.
-        mode: The mode to set.
-        uid: The owner to set.
-        gid: The group to set.
+        path: A string representing the directory that should take on the specified
+            ownership and permissions.
+        mode: The umask of the directory access permissions.
+        uid: The system user ID that should own the directory.
+        gid: The system group ID that should be associated with the directory.
         """
         try:
             os.chown(path, uid, gid)
@@ -130,9 +132,10 @@ class Broadcaster(object):
 
             except Exception as exception:
                 message = \
-                    'Could not create directory %s for broadcast %s, program %s. %s:%s\n%s' \
-                    % (path, self.broadcast_name, self.program_name,
-                       type(exception).__name__, str(exception), traceback.format_exc())
-                self.logger.critical(message)
+                    'Could not create directory %s for broadcast %s, program %s. %s:% s ' \
+                    '\n%s' % (path, self.broadcast_name, self.program_name,
+                              type(exception).__name__, str(exception),
+                              traceback.format_exc())
+                self.logger.error(message)
                 # TODO: Implement exception chaining when we move to Python 3.
                 raise BroadcasterInitException(message)

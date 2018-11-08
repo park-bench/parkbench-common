@@ -1,4 +1,4 @@
-# Copyright 2017-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,26 +21,27 @@ import os
 import subprocess
 
 class TmpfsMountError(Exception):
-    """ Raised when a tmpfs mount operation appears to fail."""
+    """ Raised when a tmpfs mount operation fails."""
 
 def path_is_tmpfs_mountpoint(path):
-    """ Checks that a path is mounted as tmpfs.
-
-    Returns True if it is mounted, False if it is not.
+    """ Checks whether a path is mounted as tmpfs.
 
     path: The path to check
+    Returns True if the path is mounted, False otherwise.
     """
     path = os.path.abspath(path)
 
     return 'none on %s type tmpfs' % path in str(subprocess.check_output('mount'))
 
 def mount_tmpfs(path, size):
-    """ Mounts a tmpfs disk. Will raise an exception if the mount fails.
+    """ Mounts a tmpfs ramdisk. Will raise an exception if the mount fails. Does nothing if
+        the given path is already a tmpfs ramdisk.
 
+    path: A string indicating the path where the ramdisk will be mounted.
+    size: The size of the ramdisk to be mounted. This should be a string representing a
+        number of bytes, and may include the single-character suffixes k, m, g, or % for
+        kibibytes, mebibytes, gibibytes, or percentage of physical RAM, respectively.
     Does not return anything.
-
-    path: The path for the disk
-    size: The size of the disk
     """
 
     path = os.path.abspath(path)

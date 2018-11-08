@@ -3,8 +3,8 @@ parkbench-common (0.8) UNRELEASED; urgency=medium
   [ Andrew Klapp ]
   * Bumped version number to match compatible libraries in project.
   * Option reading is now much more consistent.
-  * Added modules tmpfs, beaconbroadcaster, and beaconreceiver
-  * Changed package name to parkbench-common
+  * Added modules tmpfs, broadcaster, broadcastconsumer.
+  * Changed package name to parkbench-common.
 
  -- Andrew Klapp <andklapp@null.net>  Mon, 27 Nov 2017 20:29:56 -0600
 

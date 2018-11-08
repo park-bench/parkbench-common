@@ -1,4 +1,4 @@
-# Copyright 2017-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import tmpfs
 
 __all__ = ['BroadcastCheckError', 'BroadcastConsumer']
 
-BROADCAST_PATH = '/var/spool/'
+SPOOL_PATH = '/var/spool'
 TMPFS_SIZE = '1M'
 
 class BroadcastCheckError(Exception):
@@ -34,22 +34,23 @@ class BroadcastCheckError(Exception):
 class BroadcastConsumer(object):
     """Provides the consuming component of a filesystem-based IPC mechanism.
 
-    program_name: The name of the program that broadcasts this broadcast.
+    program_name: The name of the program that issues this broadcast.
     broadcast_name: The name of this broadcast.
-    check_interval: The number of seconds to wait in between re-reading the filesystem.
+    minimum_delay: The minimum delay in seconds between broadcasts. If a second broadcast
+        occurs before minimum_delay has passed, the second broadcast is ignored.
     """
-    def __init__(self, program_name, broadcast_name, check_interval):
+    def __init__(self, program_name, broadcast_name, minimum_delay):
         self.logger = logging.getLogger(__name__)
         self.logger.debug("Initializing consumer for broadcast %s from program %s.",
                           broadcast_name, program_name)
 
         self.broadcast_name = broadcast_name
         self.program_name = program_name
-        self.tmpfs_path = os.path.join(BROADCAST_PATH, program_name)
-        self.broadcast_path = os.path.join(BROADCAST_PATH, program_name, broadcast_name)
+        self.tmpfs_path = os.path.join(SPOOL_PATH, program_name)
+        self.broadcast_path = os.path.join(SPOOL_PATH, program_name, broadcast_name)
         self.last_broadcast_time = None
         self.next_check_time = time.time()
-        self.check_interval = check_interval
+        self.minimum_delay = minimum_delay
 
         tmpfs.mount_tmpfs(self.tmpfs_path, TMPFS_SIZE)
 
@@ -77,15 +78,15 @@ class BroadcastConsumer(object):
                     self.logger.debug('Updating last broadcast time from %s to %s.',
                                       self.last_broadcast_time, latest_broadcast_time)
                     broadcast_updated = True
-                    self.next_check_time = time.time() + self.check_interval
+                    self.next_check_time = time.time() + self.minimum_delay
 
         return broadcast_updated
 
     def _read_broadcast_time(self):
-        """Retrieve the most recent time on which a broadcast has been written.
+        """Retrieve the ISO formatted time from the most recent broadcast.
 
-        Returns an ISO formatted timestamp if a new broadcast file exists. Otherwise, None
-        is returned.
+        Returns a string containing an ISO formatted timestamp if a new broadcast file
+            exists. Otherwise, None is returned.
         """
         broadcast_time = None
 
