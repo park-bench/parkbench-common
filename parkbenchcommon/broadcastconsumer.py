@@ -19,7 +19,6 @@ import datetime
 import os
 import logging
 import time
-import tmpfs
 
 __all__ = ['BroadcastCheckError', 'BroadcastConsumer']
 
@@ -46,13 +45,11 @@ class BroadcastConsumer(object):
 
         self.broadcast_name = broadcast_name
         self.program_name = program_name
-        self.tmpfs_path = os.path.join(SPOOL_PATH, program_name)
-        self.broadcast_path = os.path.join(SPOOL_PATH, program_name, broadcast_name)
+        self.broadcast_path = os.path.join(SPOOL_PATH, program_name, 'ramdisk', 'broadcast')
         self.last_broadcast_time = None
         self.next_check_time = time.time()
         self.minimum_delay = minimum_delay
 
-        tmpfs.mount_tmpfs(self.tmpfs_path, TMPFS_SIZE)
 
         self.logger.info(
             'The consumer for broadcast %s from program %s has been initialized.',
@@ -91,16 +88,18 @@ class BroadcastConsumer(object):
         broadcast_time = None
 
         if os.path.isdir(self.broadcast_path):
-            if tmpfs.path_is_tmpfs_mountpoint(self.tmpfs_path):
-                file_list = os.listdir(self.broadcast_path)
-                latest_file_name = sorted(file_list, reverse=True)[0]
-                current_broadcast_time = latest_file_name.split('---')[0]
+            file_list = os.listdir(self.broadcast_path)
+            broadcast_times = []
+            for filename in file_list:
+                (read_broadcast_name, read_broadcast_time, _) = filename.split('-')
+                if read_broadcast_name == self.broadcast_name:
+                    broadcast_times.append(read_broadcast_time)
+
+            if broadcast_times:
+                current_broadcast_time = sorted(broadcast_times, reverse=True)[0]
 
                 if current_broadcast_time != self.last_broadcast_time:
                     broadcast_time = current_broadcast_time
                     self.last_broadcast_time = current_broadcast_time
-
-            else:
-                raise BroadcastCheckError('%s is not a tmpfs mountpoint.' % self.tmpfs_path)
 
         return broadcast_time
