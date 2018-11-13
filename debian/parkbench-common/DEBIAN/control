@@ -1,0 +1,9 @@
+Package: parkbench-common
+Version: 0.8
+Architecture: all
+Maintainer: eviljoel, Andrew Klapp
+Installed-Size: 80
+Depends: python-all
+Section: parkbench
+Priority: required
+Description: Helps parse Parkbench configuration files.
