@@ -23,7 +23,6 @@ import time
 __all__ = ['BroadcastCheckError', 'BroadcastConsumer']
 
 SPOOL_PATH = '/var/spool'
-TMPFS_SIZE = '1M'
 
 class BroadcastCheckError(Exception):
     """This exception is raised when an error is encountered while attempting to check a
