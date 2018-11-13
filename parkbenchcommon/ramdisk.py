@@ -15,7 +15,7 @@
 
 """ Provides helper functions for ramdisk usage."""
 
-__all__ = ['mount_ramdisk', 'path_is_ramdisk_mountpoint', 'RamdiskMountError']
+__all__ = ['mount_ramdisk', 'RamdiskMountError']
 
 import os
 import subprocess
@@ -23,19 +23,17 @@ import subprocess
 class RamdiskMountError(Exception):
     """ Raised when a ramdisk mount operation fails."""
 
-def path_is_ramdisk_mountpoint(path):
+def _path_is_ramdisk_mountpoint(path):
     """ Checks whether a path is a ramdisk mountpoint
 
     path: The path to check
     Returns True if the path is mounted, False otherwise.
     """
-    path = os.path.abspath(path)
-
     return 'none on %s type tmpfs' % path in str(subprocess.check_output('mount'))
 
 def mount_ramdisk(path, size):
     """ Mounts a ramdisk. Will raise an exception if the mount fails. Does nothing if
-        the given path is already a tmpfs ramdisk.
+        the given path is already a ramdisk.
 
     path: A string indicating the path where the ramdisk will be mounted.
     size: The size of the ramdisk to be mounted. This should be a string representing a
@@ -44,25 +42,25 @@ def mount_ramdisk(path, size):
     Does not return anything.
     """
 
-    path = os.path.abspath(path)
+    path = os.path.realpath(path)
 
-    if not path_is_ramdisk_mountpoint(path):
-        if not os.path.isfile(path):
-            os.mkdir(path)
+    if not _path_is_ramdisk_mountpoint(path):
+        if os.path.isfile(path):
+            raise RamdiskMountError(
+                'Could not mount ramdisk on %s. %s is a file.' % (path, path))
 
         if not os.path.isdir(path):
-            raise RamdiskMountError(
-                'Could not mount tmpfs on %s. %s is not a directory.' % (path, path))
-        else:
-            if not os.listdir(path) == []:
-                raise RamdiskMountError(
-                    'Could not mount tmpfs on %s. Directory is not empty.' % path)
-            else:
-                return_code = subprocess.call(
-                    ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+            os.makedirs(path)
 
-                if not path_is_ramdisk_mountpoint(path):
-                    # TODO: Implement exception chaining when we move to Python 3.
-                    raise RamdiskMountError(
-                        'Could not mount tmpfs on %s. Mount return code was %s.' % \
-                            (path, return_code))
+        if not os.listdir(path) == []:
+            raise RamdiskMountError(
+                'Could not mount ramdisk on %s. Directory is not empty.' % path)
+        else:
+            return_code = subprocess.call(
+                ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+
+            if not _path_is_ramdisk_mountpoint(path):
+                # TODO: Implement exception chaining when we move to Python 3.
+                raise RamdiskMountError(
+                    'Could not mount ramdisk on %s. Mount return code was %s.' % \
+                        (path, return_code))
