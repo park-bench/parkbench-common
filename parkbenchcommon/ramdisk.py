@@ -13,54 +13,60 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Provides helper functions for ramdisk usage."""
+""" Provides a class for managing ramdisks."""
 
-__all__ = ['mount_ramdisk', 'RamdiskMountError']
+__all__ = ['Ramdisk', 'RamdiskMountError']
 
+import logging
 import os
 import subprocess
 
 class RamdiskMountError(Exception):
     """ Raised when a ramdisk mount operation fails."""
 
-def _path_is_ramdisk_mountpoint(path):
-    """ Checks whether a path is a ramdisk mountpoint
+class Ramdisk:
+    """ A class for managing ramdisks."""
+    def __init__(self, path, size):
+        """ Stores mountpoint and options.
 
-    path: The path to check
-    Returns True if the path is mounted, False otherwise.
-    """
-    return 'none on %s type tmpfs' % path in str(subprocess.check_output('mount'))
+        path: A string indicating the path where the ramdisk will be mounted.
+        size: The size of the ramdisk to be mounted. This should be a string representing a
+            number of bytes, and may include the single-character suffixes k, m, g, or % for
+            kibibytes, mebibytes, gibibytes, or percentage of physical RAM, respectively.
+        """
+        self.logger = logging.getLogger(__name__)
+        self.path = os.path.realpath(path)
+        self.size = size
 
-def mount_ramdisk(path, size):
-    """ Mounts a ramdisk. Will raise an exception if the mount fails. Does nothing if
-        the given path is already a ramdisk.
+    def mount(self):
+        """ Mounts the ramdisk. Raises an exception if it fails, and does nothing if the
+        disk is already mounted.
 
-    path: A string indicating the path where the ramdisk will be mounted.
-    size: The size of the ramdisk to be mounted. This should be a string representing a
-        number of bytes, and may include the single-character suffixes k, m, g, or % for
-        kibibytes, mebibytes, gibibytes, or percentage of physical RAM, respectively.
-    Does not return anything.
-    """
+        Never returns anything.
+        """
+        if not self.is_mounted():
+            if os.path.isfile(self.path):
+                raise RamdiskMountError(
+                    'Could not mount ramdisk on %s. %s is a file.' % (self.path, self.path))
 
-    path = os.path.realpath(path)
+            if not os.path.isdir(self.path):
+                os.makedirs(self.path)
 
-    if not _path_is_ramdisk_mountpoint(path):
-        if os.path.isfile(path):
-            raise RamdiskMountError(
-                'Could not mount ramdisk on %s. %s is a file.' % (path, path))
+            if not os.listdir(self.path) == []:
+                self.logger.warning('Ramdisk mountpoint %s is not empty.', self.path)
 
-        if not os.path.isdir(path):
-            os.makedirs(path)
-
-        if not os.listdir(path) == []:
-            raise RamdiskMountError(
-                'Could not mount ramdisk on %s. Directory is not empty.' % path)
-        else:
             return_code = subprocess.call(
-                ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
+                ['mount', '-t', 'tmpfs', '-o', 'size=%s' % self.size, 'none',
+                 self.path])
 
-            if not _path_is_ramdisk_mountpoint(path):
+            if not self.is_mounted():
                 # TODO: Implement exception chaining when we move to Python 3.
                 raise RamdiskMountError(
                     'Could not mount ramdisk on %s. Mount return code was %s.' % \
-                        (path, return_code))
+                        (self.path, return_code))
+
+    def is_mounted(self):
+        """ Checks whether the ramdisk is mounted. Returns True if is mounted, returns False
+        otherwise.
+        """
+        return 'none on %s type tmpfs' % self.path in str(subprocess.check_output('mount'))

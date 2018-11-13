@@ -59,6 +59,7 @@ class Broadcaster(object):
 
         program_path = os.path.join(SPOOL_PATH, program_name)
         ramdisk_path = os.path.join(program_path, 'ramdisk')
+        self.ramdisk = ramdisk.Ramdisk(ramdisk_path, RAMDISK_SIZE)
         self.broadcast_path = os.path.join(ramdisk_path, 'broadcast')
 
         # drwx--x---
@@ -70,7 +71,8 @@ class Broadcaster(object):
         self.logger.debug('Creating broadcast directories for program %s.', program_name)
         daemonhelper.create_directories(
             SPOOL_PATH, [program_path, ramdisk_path], uid, gid, user_rw_mode)
-        ramdisk.mount_ramdisk(ramdisk_path, RAMDISK_SIZE)
+
+        self.ramdisk.mount()
         daemonhelper.create_directories(
             ramdisk_path, [self.broadcast_path], uid, gid, group_rw_mode)
 
