@@ -62,6 +62,7 @@ def mount_tmpfs(path, size):
                     ['mount', '-t', 'tmpfs', '-o', 'size=%s' % size, 'none', path])
 
                 if not path_is_tmpfs_mountpoint(path):
+                    # TODO: Implement exception chaining when we move to Python 3.
                     raise TmpfsMountError(
                         'Could not mount tmpfs on %s. Mount return code was %s.' % \
                             (path, return_code))
