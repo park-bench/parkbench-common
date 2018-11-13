@@ -26,17 +26,21 @@ class RamdiskMountError(Exception):
 
 class Ramdisk:
     """ A class for managing ramdisks."""
-    def __init__(self, path, size):
+    def __init__(self, path, size, uid, gid, umask):
         """ Stores mountpoint and options.
 
         path: A string indicating the path where the ramdisk will be mounted.
         size: The size of the ramdisk to be mounted. This should be a string representing a
             number of bytes, and may include the single-character suffixes k, m, g, or % for
             kibibytes, mebibytes, gibibytes, or percentage of physical RAM, respectively.
+        uid: The system user ID that should own the mount directory.
+        gid: The system group ID that should be associated with the mount directory.
+        mode: The umask of the mount directory access permissions. This should be a decimal
+            integer. ex: 511, not 777.
         """
         self.logger = logging.getLogger(__name__)
         self.path = os.path.realpath(path)
-        self.size = size
+        self.mount_options = 'size=%s,uid=%s,gid=%s,umask=%s' % (size, uid, gid, oct(umask))
 
     def mount(self):
         """ Mounts the ramdisk. Raises an exception if it fails, and does nothing if the
@@ -56,7 +60,7 @@ class Ramdisk:
                 self.logger.warning('Ramdisk mountpoint %s is not empty.', self.path)
 
             return_code = subprocess.call(
-                ['mount', '-t', 'tmpfs', '-o', 'size=%s' % self.size, 'none',
+                ['mount', '-t', 'tmpfs', '-o', self.mount_options, 'none',
                  self.path])
 
             if not self.is_mounted():
