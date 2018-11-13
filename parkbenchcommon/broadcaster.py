@@ -13,7 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Provides the broadcasting component of a filesystem-based IPC mechanism."""
+"""Provides the broadcasting component of a filesystem-based IPC mechanism.
+
+We decided to use this system because we were unsure that Unix domain sockets were capable
+    of broadcasting atomically to multiple programs and D-Bus would have required a
+    substantial restructuring of the entire project.
+"""
 
 __all__ = ['BroadcasterIssueException',
            'BroadcasterInitException',

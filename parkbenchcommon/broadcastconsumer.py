@@ -45,7 +45,7 @@ class BroadcastConsumer(object):
         self.broadcast_name = broadcast_name
         self.program_name = program_name
         self.broadcast_path = os.path.join(SPOOL_PATH, program_name, 'ramdisk', 'broadcast')
-        self.last_broadcast_time = None
+        self.last_broadcast_time = datetime.datetime.now().isoformat()
         self.next_check_time = time.time()
         self.minimum_delay = minimum_delay
 
