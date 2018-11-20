@@ -15,8 +15,8 @@ Bug fixes are welcome!
 `ConfigHelper` is a helper class for `ConfigParser`. It includes expanded option validation,
 and makes some assumptions specific to Parkbench projects.
 
-### Tmpfs
-`tmpfs` is a very simple module for mounting tmpfs filesystems.
+### Ramdisk
+`ramdisk` is a very simple module for mounting filesystems on ramdisks. It currently uses tmpfs.
 
 ### Broadcaster
 `Broadcaster` provides the broadcasting component for broadcasts, a filesystem-based IPC.
