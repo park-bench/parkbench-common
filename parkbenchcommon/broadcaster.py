@@ -72,13 +72,12 @@ class Broadcaster(object):
                                        PROGRAM_DIR_MODE)
         self.broadcast_path = os.path.join(ramdisk_path, 'broadcast')
 
-
         self.logger.debug('Creating broadcast directories for program %s.', program_name)
         daemonhelper.create_directories(SPOOL_PATH, ramdisk_path, uid, gid, PROGRAM_DIR_MODE)
 
         self.ramdisk.mount()
         daemonhelper.create_directories(
-            ramdisk_path, self.broadcast_path, uid, gid, BROADCAST_DIR_MODE)
+            ramdisk_path, 'broadcast', uid, gid, BROADCAST_DIR_MODE)
 
         self.logger.info("Broadcaster %s from program %s initialized.",
                          broadcast_name, program_name)
@@ -92,7 +91,7 @@ class Broadcaster(object):
         now = datetime.datetime.now().isoformat()
         random_number = os.urandom(16).encode('hex')
 
-        broadcast_filename = '%s-%s-%s' % (self.broadcast_name, now, random_number)
+        broadcast_filename = '%s---%s---%s' % (self.broadcast_name, now, random_number)
         broadcast_pathname = os.path.join(self.broadcast_path, broadcast_filename)
 
         try:

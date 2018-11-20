@@ -26,7 +26,7 @@ class RamdiskMountError(Exception):
 
 class Ramdisk:
     """ A class for managing ramdisks."""
-    def __init__(self, path, size, uid, gid, umask):
+    def __init__(self, path, size, uid, gid, mode):
         """ Stores mountpoint and options.
 
         path: A string indicating the path where the ramdisk will be mounted.
@@ -35,12 +35,12 @@ class Ramdisk:
             kibibytes, mebibytes, gibibytes, or percentage of physical RAM, respectively.
         uid: The system user ID that should own the mount directory.
         gid: The system group ID that should be associated with the mount directory.
-        mode: The umask of the mount directory access permissions. This should be a decimal
+        mode: The mode of the mount directory access permissions. This should be a decimal
             integer. ex: 511, not 777.
         """
         self.logger = logging.getLogger(__name__)
         self.path = os.path.realpath(path)
-        self.mount_options = 'size=%s,uid=%s,gid=%s,umask=%s' % (size, uid, gid, oct(umask))
+        self.mount_options = 'size=%s,uid=%s,gid=%s,mode=%s' % (size, uid, gid, oct(mode))
 
     def mount(self):
         """ Mounts the ramdisk. Raises an exception if it fails, and does nothing if the

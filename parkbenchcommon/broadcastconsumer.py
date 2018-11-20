@@ -90,7 +90,7 @@ class BroadcastConsumer(object):
             file_list = os.listdir(self.broadcast_path)
             broadcast_times = []
             for filename in file_list:
-                (read_broadcast_name, read_broadcast_time, _) = filename.split('-')
+                (read_broadcast_name, read_broadcast_time, _) = filename.split('---')
                 if read_broadcast_name == self.broadcast_name:
                     broadcast_times.append(read_broadcast_time)
 
