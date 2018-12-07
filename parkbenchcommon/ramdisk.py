@@ -73,7 +73,9 @@ class Ramdisk:
                     'Could not mount ramdisk on %s. Specified path is a file.' % self.path)
 
             if not os.path.isdir(self.path):
-                os.makedirs(self.path)
+                raise RamdiskMountError(
+                    'Could not mount ramdisk on %s. Specified path does not exist.' % \
+                    self.path)
 
             if not os.listdir(self.path) == []:
                 self.logger.warning('Ramdisk mountpoint %s is not empty.', self.path)
