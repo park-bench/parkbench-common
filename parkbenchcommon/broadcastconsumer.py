@@ -65,7 +65,7 @@ class BroadcastConsumer(object):
 
         if latest_broadcast_time is not None:
             if latest_broadcast_time > datetime.datetime.now().isoformat():
-                self.logger.warning('Read a broadcast from the future and ignoring it.')
+                self.logger.warning('Read a broadcast from the future and ignored it.')
 
             else:
                 if self.next_check_time < time.time():

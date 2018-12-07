@@ -16,8 +16,8 @@
 """Provides the broadcasting component of a filesystem-based IPC mechanism.
 
 We decided to use this system because we were unsure that Unix domain sockets were capable
-    of broadcasting atomically to multiple programs and D-Bus would have required a
-    substantial restructuring of the entire project.
+  of broadcasting atomically to multiple programs and using D-Bus would have required a
+  substantial restructuring of the entire project.
 """
 
 __all__ = ['BroadcasterIssueException',
@@ -50,7 +50,7 @@ class Broadcaster(object):
 
     def __init__(self, program_name, broadcast_name, uid, gid):
         """Initial configuration of the broadcast directory. This must be done as root. This
-        constructor mounts a ramdisk and creates any necessary spool rirectories with
+        constructor mounts a ramdisk and creates any necessary spool directories with
         proper permissions. Any failure to create directories will raise exceptions.
 
         program_name: The name of the program issuing the broadcast.
@@ -60,7 +60,7 @@ class Broadcaster(object):
         """
 
         self.logger = logging.getLogger(__name__)
-        self.logger.debug("Initializing broadcaster for broadcast %s from program %s.",
+        self.logger.debug('Initializing broadcaster for broadcast %s from program %s.',
                           broadcast_name, program_name)
 
         self.program_name = program_name
@@ -79,7 +79,7 @@ class Broadcaster(object):
         daemonhelper.create_directories(
             ramdisk_path, 'broadcast', uid, gid, BROADCAST_DIR_MODE)
 
-        self.logger.info("Broadcaster %s from program %s initialized.",
+        self.logger.info('Broadcaster %s from program %s initialized.',
                          broadcast_name, program_name)
 
     def issue(self):
@@ -87,8 +87,9 @@ class Broadcaster(object):
         it fails.
         """
         self.logger.info(
-            "Issuing broadcast %s for program %s.", self.broadcast_name, self.program_name)
+            'Issuing broadcast %s for program %s.', self.broadcast_name, self.program_name)
         now = datetime.datetime.now().isoformat()
+        # A random-ish number is added to the filename to avoid filename collisions.
         random_number = os.urandom(16).encode('hex')
 
         broadcast_filename = '%s---%s---%s' % (self.broadcast_name, now, random_number)

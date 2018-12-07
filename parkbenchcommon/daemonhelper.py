@@ -26,9 +26,9 @@ def create_directories(system_path, program_dirs, uid, gid, mode):
       modified.
     program_dirs: A string representing additional directories that should be created under
       the system path that should take on the following ownership and permissions.
-    uid: The system user ID that should own the directory.
-    gid: The system group ID that should be associated with the directory.
-    mode: The umask of the directory access permissions.
+    uid: The system user ID that should own the directories.
+    gid: The system group ID that should be associated with the directories.
+    mode: The access mode of the directories to be created.
     """
 
     path = system_path
