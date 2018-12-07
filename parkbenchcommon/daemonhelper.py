@@ -17,7 +17,8 @@
 
 import os
 
-def create_directories(system_path, program_dirs, uid, gid, mode):
+def create_directories(system_path, program_dirs, uid, gid, mode,
+                       keep_existing_permissions=False):
     """Creates directories if they do not exist and sets the specified ownership and
     permissions.
 
@@ -34,8 +35,12 @@ def create_directories(system_path, program_dirs, uid, gid, mode):
     path = system_path
     for directory in program_dirs.strip('/').split('/'):
         path = os.path.join(path, directory)
+        new_directory = False
         if not os.path.isdir(path):
             # Will throw exception if file cannot be created.
             os.makedirs(path, mode)
-        os.chown(path, uid, gid)
-        os.chmod(path, mode)
+            new_directory = True
+
+        if not keep_existing_permissions or (keep_existing_permissions and new_directory):
+            os.chown(path, uid, gid)
+            os.chmod(path, mode)
