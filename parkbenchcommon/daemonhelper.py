@@ -30,6 +30,8 @@ def create_directories(system_path, program_dirs, uid, gid, mode,
     uid: The system user ID that should own the directories.
     gid: The system group ID that should be associated with the directories.
     mode: The access mode of the directories to be created.
+    keep_existing_permissions: If True, do not modify permissions or ownership of any
+      directories that already exist.
     """
 
     path = system_path
