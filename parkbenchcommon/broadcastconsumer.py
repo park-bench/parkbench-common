@@ -45,7 +45,8 @@ class BroadcastConsumer(object):
         self.broadcast_name = broadcast_name
         self.program_name = program_name
         self.broadcast_path = os.path.join(SPOOL_PATH, program_name, 'ramdisk', 'broadcast')
-        self.last_broadcast_time = datetime.datetime.now().isoformat()
+        self.last_consumed_broadcast = datetime.datetime.now().isoformat()
+        self.last_read_broadcast = datetime.datetime.now().isoformat()
         self.next_check_time = time.time()
         self.minimum_delay = minimum_delay
 
@@ -68,11 +69,18 @@ class BroadcastConsumer(object):
                 self.logger.warning('Read a broadcast from the future and ignored it.')
 
             else:
-                if self.next_check_time < time.time():
-                    self.logger.info('The broadcast %s from program %s has been consumed.',
-                                     self.broadcast_name, self.program_name)
-                    self.logger.debug('Updating last broadcast time from %s to %s.',
-                                      self.last_broadcast_time, latest_broadcast_time)
+                if self.next_check_time > time.time():
+                    if latest_broadcast_time > self.last_consumed_broadcast:
+                        self.logger.debug(
+                            'Read a broadcast issued during the rate limiting delay and '
+                            'ignored it.')
+                else:
+                    self.logger.info(
+                        'The broadcast %s from program %s has been consumed.',
+                        self.broadcast_name, self.program_name)
+                    self.logger.debug(
+                        'Updating last consumed broadcast time from %s to %s.',
+                        self.last_consumed_broadcast, latest_broadcast_time)
                     broadcast_updated = True
                     self.next_check_time = time.time() + self.minimum_delay
 
@@ -97,8 +105,8 @@ class BroadcastConsumer(object):
             if broadcast_times:
                 current_broadcast_time = sorted(broadcast_times, reverse=True)[0]
 
-                if current_broadcast_time != self.last_broadcast_time:
+                if current_broadcast_time != self.last_read_broadcast:
                     broadcast_time = current_broadcast_time
-                    self.last_broadcast_time = current_broadcast_time
+                    self.last_read_broadcast = current_broadcast_time
 
         return broadcast_time
