@@ -1,5 +1,5 @@
 .pybuild/*
-parkbench-common.egg-info/*
+parkbenchcommon.egg-info/*
 debian/parkbench-common/*
 debian/parkbench-common.debhelper.log
 debian/parkbench-common.install
