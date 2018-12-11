@@ -1,7 +1,7 @@
 Source: parkbench-common
 Section: parkbench
 Priority: required
-Maintainer: eviljoel, Andrew Klapp
+Maintainer: eviljoel, Emily Frost
 Standards-Version: 3.9.6.1
 Build-Depends: debhelper (>=9),
                dh-python,
@@ -11,4 +11,4 @@ Build-Depends: debhelper (>=9),
 Package: parkbench-common
 Architecture: all
 Depends: python-all, ${python::Depends}, ${misc::Depends}
-Description: Helps parse Parkbench configuration files.
+Description: A support package for Parkbench projects.

@@ -1,4 +1,4 @@
-# Copyright 2015-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2015-2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,6 @@
 
 """parkbenchcommon is a support package for Parkbench projects."""
 
-__all__ = ['broadcaster', 'broadcastconsumer', 'confighelper', 'tmpfs']
-__author__ = 'Joel Luellwitz and Andrew Klapp'
+__all__ = ['broadcaster', 'broadcastconsumer', 'confighelper', 'ramdisk']
+__author__ = 'Joel Luellwitz and Emily Frost'
 __version__ = '0.8'

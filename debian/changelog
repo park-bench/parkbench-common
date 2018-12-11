@@ -6,7 +6,7 @@ parkbench-common (0.8) UNRELEASED; urgency=medium
   * Added modules ramdisk, broadcaster, broadcastconsumer.
   * Changed package name to parkbench-common.
 
- -- Andrew Klapp <andklapp@null.net>  Mon, 27 Nov 2017 20:29:56 -0600
+ -- Emily Frost <emfrost@posteo.net>  Mon, 27 Nov 2017 20:29:56 -0600
 
 confighelper (0.3) stable; urgency=low
 
