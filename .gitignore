@@ -2,7 +2,6 @@
 parkbenchcommon.egg-info/*
 debian/parkbench-common/*
 debian/parkbench-common.debhelper.log
-debian/parkbench-common.install
 debian/parkbench-common.postinst.debhelper
 debian/parkbench-common.prerm.debhelper
 debian/parkbench-common.substvars
