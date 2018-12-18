@@ -117,8 +117,9 @@ class Ramdisk:
         size_input: A string to be validated.
         """
         if not self._is_integer(size_input):
-            if not (size_input[-1:] in VALID_TMPFS_SIZE_SUFFIXES \
-                and self._is_integer(size_input[:-1])):
+            if not self._is_integer(size_input[:-1]) \
+               or not size_input[-1:] in VALID_TMPFS_SIZE_SUFFIXES:
+
                 message = 'The value %s for ramdisk mount option size is not ' \
                         'formatted correctly.' % size_input
                 self.logger.error(message)
