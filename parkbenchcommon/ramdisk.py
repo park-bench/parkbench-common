@@ -21,8 +21,12 @@ import logging
 import os
 import subprocess
 
+# This is easy to edit, just in case someone wants a disk measurable in terabytes.
+VALID_TMPFS_SIZE_SUFFIXES = ['k', 'm', 'g', '%']
+
 class RamdiskMountError(Exception):
     """Raised when a ramdisk mount operation fails."""
+
 
 class RamdiskOptionError(ValueError):
     """Raised when an option for a ramdisk mount is invalid."""
@@ -59,7 +63,7 @@ class Ramdisk:
 
         # Since size should be an integer with a single character suffix, we validate only
         #   the integer part by including all but the last character of the string.
-        self._validate_integer_option('size', size[:-1])
+        self._validate_size_option(size)
         self._validate_integer_option('uid', uid)
         self._validate_integer_option('gid', gid)
         self._validate_integer_option('mode', mode)
@@ -100,11 +104,29 @@ class Ramdisk:
         """Raises an exception and writes a log message if the given value is not an
         integer.
         """
-        try:
-            int(value)
-
-        except ValueError as value_error:
-            message = 'The value %s ramdisk mount option %s was not formatted correctly.' \
-                % (value, option_name)
+        if not self._is_integer(value):
+            message = 'The value %s for ramdisk mount option %s was not formatted' \
+                ' correctly.' % (value, option_name)
             self.logger.error(message)
             raise RamdiskOptionError(message)
+
+    def _validate_size_option(self, size_input):
+        if not self._is_integer(size_input):
+            if not (size_input[-1:] in VALID_TMPFS_SIZE_SUFFIXES \
+                and self._is_integer(size_input[:-1])):
+                message = 'The value %s for ramdisk mount option size was not' \
+                        ' formatted correctly.' % size_input
+                self.logger.error(message)
+                raise RamdiskOptionError(message)
+
+    def _is_integer(self, value):
+        """Checks a string for integer-ness.
+
+        Returns True if it can be an integer, returns False otherwise.
+        """
+        try:
+            int(value)
+            return True
+
+        except ValueError:
+            return False
