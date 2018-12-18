@@ -105,17 +105,22 @@ class Ramdisk:
         integer.
         """
         if not self._is_integer(value):
-            message = 'The value %s for ramdisk mount option %s was not formatted' \
-                ' correctly.' % (value, option_name)
+            message = 'The value %s for ramdisk mount option %s is not formatted ' \
+                'correctly.' % (value, option_name)
             self.logger.error(message)
             raise RamdiskOptionError(message)
 
     def _validate_size_option(self, size_input):
+        """Checks whether a size definition is formatted correctly. If it is not, this
+        method will raise an exception.
+
+        size_input: A string to be validated.
+        """
         if not self._is_integer(size_input):
             if not (size_input[-1:] in VALID_TMPFS_SIZE_SUFFIXES \
                 and self._is_integer(size_input[:-1])):
-                message = 'The value %s for ramdisk mount option size was not' \
-                        ' formatted correctly.' % size_input
+                message = 'The value %s for ramdisk mount option size is not ' \
+                        'formatted correctly.' % size_input
                 self.logger.error(message)
                 raise RamdiskOptionError(message)
 

@@ -32,7 +32,7 @@ class BroadcastCheckError(Exception):
 class BroadcastConsumer(object):
     """Provides the consuming component of a filesystem-based IPC mechanism.
 
-    Any beacons broadcast before BroadcastConsumer was instantiated will be ignored.
+    Any beacons broadcast before BroadcastConsumer is instantiated will be ignored.
 
     program_name: The name of the program that issues this broadcast.
     broadcast_name: The name of this broadcast.
@@ -69,7 +69,7 @@ class BroadcastConsumer(object):
         if latest_broadcast_time is not None:
             if latest_broadcast_time > datetime.datetime.now().isoformat():
                 self.logger.warning('Read a %s broadcast from %s from the future and ignored'
-                                    'it. The reported time was %s.', self.broadcast_name,
+                                    ' it. The reported time was %s.', self.broadcast_name,
                                     self.program_name, latest_broadcast_time)
 
             else:
