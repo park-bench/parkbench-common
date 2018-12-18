@@ -43,6 +43,6 @@ def create_directories(system_path, program_dirs, uid, gid, mode,
             os.makedirs(path, mode)
             new_directory = True
 
-        if not keep_existing_permissions or (keep_existing_permissions and new_directory):
+        if not keep_existing_permissions or new_directory:
             os.chown(path, uid, gid)
             os.chmod(path, mode)

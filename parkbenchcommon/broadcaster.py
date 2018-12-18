@@ -88,7 +88,7 @@ class Broadcaster(object):
         self.logger.info(
             'Issuing broadcast %s for program %s.', self.broadcast_name, self.program_name)
         now = datetime.datetime.now().isoformat()
-        # A random-ish number is added to the filename to avoid filename collisions.
+        # A random number is added to the filename to avoid filename collisions.
         random_number = os.urandom(16).encode('hex')
 
         broadcast_filename = '%s---%s---%s' % (self.broadcast_name, now, random_number)

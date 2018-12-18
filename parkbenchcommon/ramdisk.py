@@ -32,14 +32,14 @@ class Ramdisk:
     """A class for managing ramdisks."""
 
     def __init__(self, path):
-        """Stores mountpoint and options.
+        """Constructor.
 
         path: A string indicating the path where the ramdisk will be mounted.
         """
         self.logger = logging.getLogger(__name__)
 
-        # The mount command outputs the canonical path of all mountpoints, so it will need
-        #   to know the absolute path with any links resolved. Python calls this realpath.
+        # The mount command outputs the canonical path of all mountpoints. Python calls this
+        #   realpath.
         self.path = os.path.realpath(path)
 
     def mount(self, size, uid, gid, mode):
@@ -101,10 +101,10 @@ class Ramdisk:
         integer.
         """
         try:
-            value = int(value)
+            int(value)
 
         except ValueError as value_error:
-            message = 'The ramdisk mount option %s was not formatted correctly.' \
-                % option_name
+            message = 'The value %s ramdisk mount option %s was not formatted correctly.' \
+                % (value, option_name)
             self.logger.error(message)
             raise RamdiskOptionError(message)
