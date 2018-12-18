@@ -269,9 +269,29 @@ class ConfigHelper(object):
 
         return float_array
 
+    def get_string_list_if_exists(self, config_file, option_name):
+        """Parses a comma-delimited list of strings into an actual list and strips
+        leading and trailing whitespace.  Don't verify anything, and
+        return an empty list if the option is empty or doesn't exist.
+
+        config_file: The ConfigParser instance.
+        option_name: The name of the option being retrieved.
+        Returns the option value as an array of strings or if no value was provided, an empty
+          list.
+        """
+        option_text = self.get_string_if_exists(config_file, option_name)
+
+        strings = []
+        if option_text:
+            raw_strings = option_text.split(',')
+
+            # run strip() on each item in raw_string_array
+            strings = [string.strip() for string in raw_strings]
+        return strings
+
     def verify_string_list_exists(self, config_file, option_name):
         """Parses a comma-delimited list of strings into an actual list and strips
-        leading and trailing whitespace.
+        leading and trailing whitespace. Throws an exception if the option does not exist.
 
         config_file: The ConfigParser instance.
         option_name: The name of the option being retrieved.
@@ -306,7 +326,7 @@ class ConfigHelper(object):
 
     def get_string_if_exists(self, config_file, option_name):
         """Just grab a string from the config file.  Don't verify anything, and
-        return a None object if it is empty or doesn't exist.
+        return a None object if the option is empty or doesn't exist.
 
         config_file: The ConfigParser instance.
         option_name: The name of the option being retrieved.
