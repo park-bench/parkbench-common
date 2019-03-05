@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-# Copyright 2017-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2017-2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ root:
 python -m unittest discover --pattern=__init__.py
 """
 
-__author__ = 'Joel Luellwitz and Andrew Klapp'
+__author__ = 'Joel Luellwitz and Emily Frost'
 __version__ = '0.8'
 
 import unittest

@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-# Copyright 2015-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2015-2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@ import setuptools
 
 setuptools.setup(name='confighelper',
     description='Parkbench configuration parser',
-    author='Joel Allen Luellwitz and Andrew Klapp',
-    author_email='eviljoel@linux.com, andklapp@null.net',
+    author='Joel Allen Luellwitz and Emily Frost',
+    author_email='eviljoel@linux.com, emfrost@posteo.net',
     license='GPLv3',
     packages=['confighelper'],
     zipsafe=False)
