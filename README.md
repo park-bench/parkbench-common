@@ -4,24 +4,22 @@ _confighelper_ is a library to help parse Parkbench configuration files. Configu
 are assumed to be in the format defined by the ConfigParser Python module. This library is
 **not** a general purpose library and is only intended for use by the Parkbench project.
 
-confighelper is licensed under the GNU GPLv3.
+_confighelper_ is licensed under the GNU GPLv3.
 
 This is software is still in _beta_ and may not be ready for use in a production environment.
 
 Bug fixes are welcome!
 
 ## Prerequisites
+This software is currently only supported in Ubuntu 18.04.
 
 Currently, the only supported method for installation of this project is building and
 installing a Debian package. The rest of these instructions make the following assumptions:
 
-*   Your package is intended to run on Ubuntu 18.04 LTS. (Other operating systems may work,
-    but are not supported.)
-*   `debhelper`, dh-python`, `python-all`, and `python-setuptools` are installed on your build
+*   `debhelper`, `dh-python`, `python-all`, and `python-setuptools` are installed on your build
     server.
-*   You are already familiar with using a Linux terminal.
-*   You are familiar with using `git` and GitHub.
-*   You are already somewhat familiar with using `debuild`.
+*   You are familiar with using a Linux terminal.
+*   You are somewhat familiar with using `debuild`.
 
 ## Steps to Build and Install
 
