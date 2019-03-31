@@ -66,14 +66,15 @@ class Broadcaster(object):
         self.program_name = program_name
         self.broadcast_name = broadcast_name
 
-        program_path = os.path.join(SPOOL_PATH, program_name)
-        ramdisk_path = os.path.join(program_path, 'ramdisk')
-        self.ramdisk = ramdisk.Ramdisk(ramdisk_path)
+        ramdisk_rel_path = os.path.join(program_name, 'ramdisk')
+        ramdisk_path = os.path.join(SPOOL_PATH, ramdisk_rel_path)
         self.broadcast_path = os.path.join(ramdisk_path, 'broadcast')
 
         self.logger.debug('Creating broadcast directories for program %s.', program_name)
-        daemonhelper.create_directories(SPOOL_PATH, ramdisk_path, uid, gid, PROGRAM_DIR_MODE)
+        daemonhelper.create_directories(
+            SPOOL_PATH, ramdisk_rel_path, uid, gid, PROGRAM_DIR_MODE)
 
+        self.ramdisk = ramdisk.Ramdisk(os.path.join(ramdisk_path))
         self.ramdisk.mount(RAMDISK_SIZE, uid, gid, PROGRAM_DIR_MODE)
         daemonhelper.create_directories(
             ramdisk_path, 'broadcast', uid, gid, BROADCAST_DIR_MODE)

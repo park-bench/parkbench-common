@@ -22,7 +22,7 @@ import os
 import subprocess
 
 # This is easy to edit, just in case someone wants a disk measurable in terabytes.
-VALID_TMPFS_SIZE_SUFFIXES = ['k', 'm', 'g', '%']
+VALID_TMPFS_SIZE_SUFFIXES = ['K', 'k', 'M', 'm', 'G', 'g', '%']
 
 class RamdiskMountError(Exception):
     """Raised when a ramdisk mount operation fails."""
