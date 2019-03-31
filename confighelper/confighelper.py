@@ -1,4 +1,4 @@
-# Copyright 2015-2018 Joel Allen Luellwitz and Andrew Klapp
+# Copyright 2015-2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 """ confighelper.confighelper helps read and validate options from a ConfigParser object."""
 
 __all__ = ['ConfigHelper', 'ValidationException']
-__author__ = 'Joel Luellwitz and Andrew Klapp'
+__author__ = 'Joel Luellwitz and Emily Frost'
 __version__ = '0.8'
 
 import logging
