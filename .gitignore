@@ -13,3 +13,8 @@ debian/tmp
 *.pyc
 .idea/
 *.iml
+
+confighelper.egg-info/*
+debian/confighelper/*
+debian/confighelper.debhelper.log
+debian/confighelper.substvars
