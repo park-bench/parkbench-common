@@ -34,10 +34,6 @@ from parkbenchcommon import ramdisk
 
 SPOOL_PATH = '/var/spool'
 RAMDISK_SIZE = '1M'
-# drwx--x---
-PROGRAM_DIR_MODE = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IXGRP
-# drwxr-x---
-BROADCAST_DIR_MODE = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP
 
 class BroadcasterIssueException(Exception):
     """This exception is raised when a Broadcaster object fails to issue a broadcast."""
@@ -71,13 +67,21 @@ class Broadcaster(object):
         self.broadcast_path = os.path.join(ramdisk_path, 'broadcast')
 
         self.logger.debug('Creating broadcast directories for program %s.', program_name)
+
+        # drwx--x--x
+        program_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IXGRP | \
+                stat.S_IXOTH
+        # drwxr-x--x
+        broadcast_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | \
+            stat.S_IXGRP | stat.S_IXOTH
+
         daemonhelper.create_directories(
-            SPOOL_PATH, ramdisk_rel_path, uid, gid, PROGRAM_DIR_MODE)
+            SPOOL_PATH, ramdisk_rel_path, uid, gid, program_dir_mode)
 
         self.ramdisk = ramdisk.Ramdisk(os.path.join(ramdisk_path))
-        self.ramdisk.mount(RAMDISK_SIZE, uid, gid, PROGRAM_DIR_MODE)
+        self.ramdisk.mount(RAMDISK_SIZE, uid, gid, program_dir_mode)
         daemonhelper.create_directories(
-            ramdisk_path, 'broadcast', uid, gid, BROADCAST_DIR_MODE)
+            ramdisk_path, 'broadcast', uid, gid, broadcast_dir_mode)
 
         self.logger.info('Broadcaster %s from program %s initialized.',
                          broadcast_name, program_name)
