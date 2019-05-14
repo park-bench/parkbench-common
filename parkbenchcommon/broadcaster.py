@@ -62,21 +62,23 @@ class Broadcaster(object):
         self.program_name = program_name
         self.broadcast_name = broadcast_name
 
-        ramdisk_rel_path = os.path.join(program_name, 'ramdisk')
-        ramdisk_path = os.path.join(SPOOL_PATH, ramdisk_rel_path)
+        ramdisk_relative_path = os.path.join(program_name, 'ramdisk')
+        ramdisk_path = os.path.join(SPOOL_PATH, ramdisk_relative_path)
         self.broadcast_path = os.path.join(ramdisk_path, 'broadcast')
 
         self.logger.debug('Creating broadcast directories for program %s.', program_name)
 
+        # TODO: Remove S_IXOTH permission when NetCheck's standard-daemonizing branch is
+        #   merged in.
         # drwx--x--x
-        program_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IXGRP | \
-                stat.S_IXOTH
+        program_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IXGRP \
+            | stat.S_IXOTH
         # drwxr-x--x
-        broadcast_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | \
-            stat.S_IXGRP | stat.S_IXOTH
+        broadcast_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP \
+            | stat.S_IXGRP | stat.S_IXOTH
 
         daemonhelper.create_directories(
-            SPOOL_PATH, ramdisk_rel_path, uid, gid, program_dir_mode)
+            SPOOL_PATH, ramdisk_relative_path, uid, gid, program_dir_mode)
 
         self.ramdisk = ramdisk.Ramdisk(os.path.join(ramdisk_path))
         self.ramdisk.mount(RAMDISK_SIZE, uid, gid, program_dir_mode)
