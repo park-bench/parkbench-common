@@ -68,8 +68,8 @@ class Broadcaster(object):
 
         self.logger.debug('Creating broadcast directories for program %s.', program_name)
 
-        # TODO: Remove S_IXOTH permission when NetCheck's standard-daemonizing branch is
-        #   merged in.
+        # TODO: Remove S_IXOTH and S_IROTH permissions when NetCheck's standard-daemonizing
+        #   branch is merged in.
         # drwx--x--x
         program_dir_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IXGRP \
             | stat.S_IXOTH
