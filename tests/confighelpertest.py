@@ -23,8 +23,8 @@ __version__ = '0.8'
 import ConfigParser
 import logging
 import unittest
-import confighelper
-from confighelper import ValidationException
+from parkbenchcommon import confighelper
+from parkbenchcommon.confighelper import ValidationException
 
 CONFIG_FILE_PATH = './tests/data/config.txt'
 

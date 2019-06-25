@@ -1,6 +1,6 @@
-#!/usr/bin/make -f
+#!/usr/bin/python2
 
-# Copyright 2015-2018 Joel Allen Luellwitz and Emily Frost
+# Copyright 2018 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export PYBUILD_NAME=parkbench-common
+import logging
+import time
+from parkbenchcommon.broadcastconsumer import BroadcastConsumer
 
-%:
-	dh $@ --with python2 --buildsystem=pybuild
+logging.basicConfig(level=logging.DEBUG)
+print(logging.handlers)
+
+consumer = BroadcastConsumer('test_program', 'test_name', 1)
+
+while True:
+    if consumer.check():
+        print('Broadcast received.')
+    else:
+        print('Nothing new.')
+
+    time.sleep(2)
