@@ -1,4 +1,4 @@
-# Copyright 2018 Joel Allen Luellwitz and Emily Frost
+# Copyright 2018-2019 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,8 +68,7 @@ class Ramdisk:
         self._validate_integer_option('gid', gid)
         self._validate_integer_option('mode', mode)
 
-        # TODO #16: On Python 3 migration, oct() will break this code.
-        mount_options = 'size=%s,uid=%s,gid=%s,mode=%s' % (size, uid, gid, oct(mode))
+        mount_options = 'size=%s,uid=%s,gid=%s,mode=%s' % (size, uid, gid, format(mode, 'o'))
 
         if not self.is_mounted():
             if os.path.isfile(self.path):

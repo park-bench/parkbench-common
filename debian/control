@@ -5,10 +5,10 @@ Maintainer: eviljoel, Emily Frost
 Standards-Version: 3.9.6.1
 Build-Depends: debhelper (>=9),
                dh-python,
-               python-all (>=2),
+               python3,
                python-setuptools
 
 Package: parkbench-common
 Architecture: all
-Depends: python-all, ${python::Depends}, ${misc::Depends}
+Depends: python3, ${python::Depends}, ${misc::Depends}
 Description: A support package for Parkbench projects.

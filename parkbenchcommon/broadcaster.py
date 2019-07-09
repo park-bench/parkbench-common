@@ -1,4 +1,4 @@
-# Copyright 2018 Joel Allen Luellwitz and Emily Frost
+# Copyright 2018-2019 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class BroadcasterIssueException(Exception):
 class BroadcasterInitException(Exception):
     """This exception is raised when a Broadcaster object fails to initialize."""
 
-class Broadcaster(object):
+class Broadcaster():
     """Provides the broadcasting component of a filesystem-based IPC mechanism."""
 
     def __init__(self, program_name, broadcast_name, uid, gid):

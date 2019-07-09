@@ -1,4 +1,4 @@
-# Copyright 2018 Joel Allen Luellwitz and Emily Frost
+# Copyright 2018-2019 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ class BroadcastCheckError(Exception):
     broadcast.
     """
 
-class BroadcastConsumer(object):
+class BroadcastConsumer():
     """Provides the consuming component of a filesystem-based IPC mechanism.
 
     Any beacons broadcast before BroadcastConsumer is instantiated will be ignored.

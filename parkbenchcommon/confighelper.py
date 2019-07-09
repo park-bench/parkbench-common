@@ -1,4 +1,4 @@
-# Copyright 2015-2018 Joel Allen Luellwitz and Emily Frost
+# Copyright 2015-2019 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ValidationException(Exception):
     """Indicates that configuration validation has failed."""
 
 
-class ConfigHelper(object):
+class ConfigHelper():
     """Contains methods to help parse and validate ConfigParser configuration files."""
 
     def __init__(self):
