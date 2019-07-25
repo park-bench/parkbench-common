@@ -18,4 +18,4 @@
 export PYBUILD_NAME=parkbench-common
 
 %:
-	dh $@ --with python2 --buildsystem=pybuild
+	dh $@ --with python3 --buildsystem=pybuild

@@ -5,6 +5,7 @@ parkbench-common (0.8) UNRELEASED; urgency=medium
   * Option reading is now much more consistent.
   * Added modules ramdisk, broadcaster, broadcastconsumer.
   * Changed package name to parkbench-common.
+  * Switched to Python 3.
 
  -- Emily Frost <emfrost@posteo.net>  Mon, 27 Nov 2017 20:29:56 -0600
 

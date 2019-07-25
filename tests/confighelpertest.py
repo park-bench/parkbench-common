@@ -20,7 +20,7 @@
 __author__ = 'Joel Luellwitz and Emily Frost'
 __version__ = '0.8'
 
-import ConfigParser
+import configparser
 import logging
 import unittest
 from parkbenchcommon import confighelper
@@ -35,7 +35,7 @@ class ConfigHelperTest(unittest.TestCase):
     def setUp(self):
         # Load config file
         # Pass it to configParser
-        self.config_file = ConfigParser.RawConfigParser()
+        self.config_file = configparser.RawConfigParser()
         self.config_file.read(CONFIG_FILE_PATH)
 
         log_file = '/dev/null'
