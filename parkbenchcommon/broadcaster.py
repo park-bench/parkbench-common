@@ -96,7 +96,7 @@ class Broadcaster():
             'Issuing broadcast %s for program %s.', self.broadcast_name, self.program_name)
         now = datetime.datetime.now().isoformat()
         # A random number is added to the filename to avoid filename collisions.
-        random_number = os.urandom(16).encode('hex')
+        random_number = os.urandom(16).hex()
 
         broadcast_filename = '%s---%s---%s' % (self.broadcast_name, now, random_number)
         broadcast_pathname = os.path.join(self.broadcast_path, broadcast_filename)
@@ -115,4 +115,4 @@ class Broadcaster():
                    str(exception), traceback.format_exc())
             self.logger.error(message)
             # TODO: Implement exception chaining when we move to Python 3.
-            raise BroadcasterIssueException(message)
+            raise BroadcasterIssueException(message) from exception
