@@ -214,12 +214,14 @@ class ConfigHelper():
             if value < lower_bound:
                 message = 'Option has a value of %s, which is below lower boundary %s.' % (
                     value, lower_bound)
+                self.logger.error(message)
                 raise ValidationException(message)
 
         if upper_bound is not None:
             if value >= upper_bound:
                 message = 'Option has a value of %s, which is equal to or above upper ' \
                           'boundary %s.' % (value, upper_bound)
+                self.logger.error(message)
                 raise ValidationException(message)
 
     def verify_valid_integer_in_list(self, config_file, option_name, valid_options):
