@@ -1,4 +1,4 @@
-# Copyright 2018-2019 Joel Allen Luellwitz and Emily Frost
+# Copyright 2018-2020 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,18 +28,20 @@ import datetime
 import logging
 import os
 import stat
-import traceback
 from parkbenchcommon import daemonhelper
 from parkbenchcommon import ramdisk
 
 SPOOL_PATH = '/var/spool'
 RAMDISK_SIZE = '1M'
 
+
 class BroadcasterIssueException(Exception):
     """This exception is raised when a Broadcaster object fails to issue a broadcast."""
 
+
 class BroadcasterInitException(Exception):
     """This exception is raised when a Broadcaster object fails to initialize."""
+
 
 class Broadcaster():
     """Provides the broadcasting component of a filesystem-based IPC mechanism."""
@@ -106,10 +108,6 @@ class Broadcaster():
                 os.remove(os.path.join(self.broadcast_path, broadcast_file))
 
         except Exception as exception:
-            message = \
-                'Could not create broadcast file for broadcast %s, program %s. %s: %s\n%s' \
-                % (self.broadcast_name, self.program_name, type(exception).__name__,
-                   str(exception), traceback.format_exc())
-            self.logger.error(message)
-            # TODO: Implement exception chaining when we move to Python 3.
+            message = 'Could not create broadcast file for broadcast %s, program %s.' % (
+                self.broadcast_name, self.program_name)
             raise BroadcasterIssueException(message) from exception
