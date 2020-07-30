@@ -1,4 +1,4 @@
-# Copyright 2018-2019 Joel Allen Luellwitz and Emily Frost
+# Copyright 2018-2020 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,9 +52,8 @@ class BroadcastConsumer():
         self.next_check_time = time.time()
         self.minimum_delay = minimum_delay
 
-
         self.logger.info(
-            'The consumer for broadcast %s from program %s has been initialized.',
+            "The consumer for broadcast '%s' from program '%s' has been initialized.",
             broadcast_name, program_name)
 
     def check(self):
