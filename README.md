@@ -32,7 +32,7 @@ installing a Debian package. The rest of these instructions make the following a
 
 *   This package is intended to run on Ubuntu 18.04 LTS. (Other operating systems may work,
     but are not supported.)
-*   `debhelper`, `dh-python`, `python-all`, and `python-setuptools` are installed on your
+*   `debhelper`, `devscripts`, `dh-python`, `python-all`, and `python-setuptools` are installed on your
     build server.
 *   You are already familiar with using a Linux terminal.
 *   You are familiar with using `git` and GitHub.
