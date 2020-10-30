@@ -104,6 +104,7 @@ class Broadcaster():
             previous_broadcasts = os.listdir(self.broadcast_path)
             open(broadcast_pathname, 'a').close()
 
+            # TODO: Delete only broadcasts with a matching broadcast name. (issue 23)
             for broadcast_file in previous_broadcasts:
                 os.remove(os.path.join(self.broadcast_path, broadcast_file))
 

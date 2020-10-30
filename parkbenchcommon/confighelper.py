@@ -1,4 +1,4 @@
-# Copyright 2015-2019 Joel Allen Luellwitz and Emily Frost
+# Copyright 2015-2020 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ OPTION_MISSING_ERROR_MESSAGE = 'Option %s not found.'
 def _trace(self, message, *args, **kwargs):
     """Trace is defined here because being in another class breaks references to self.
 
-    message: The messgae to be logged.  Maybe contain placeholders to be populated by args
-      and kwargs.
+    message: The message to be logged. May contain placeholders to be populated by args and
+      kwargs.
     args: List of positional arguments.
     kwargs: Dictionary of named arguments.
     """
@@ -117,6 +117,7 @@ class ConfigHelper():
         if option_value is None:
             message = OPTION_MISSING_ERROR_MESSAGE % option_name
             self.logger.error(message)
+            raise ValidationException(message)
 
         self.logger.info('Password %s exists.', option_name)
         return option_value
@@ -159,7 +160,7 @@ class ConfigHelper():
             int_value = int(option_text)
         except ValueError:
             message = \
-                'Option %s has a value of %s, but that is not an integer.' % \
+                'Option %s has a value of %s but that is not an integer.' % \
                 (option_name, option_text)
             self.logger.error(message)
             raise ValidationException(message)
@@ -263,7 +264,7 @@ class ConfigHelper():
             try:
                 float_value = float(string_value.strip())
             except ValueError:
-                message = 'Option %s has a value of %s but that is not a list of numbers. ' \
+                message = 'Option %s has a value of %s but that is not a list of numbers.' \
                     % (option_name, option_text)
                 self.logger.error(message)
                 raise ValidationException(message)
@@ -273,8 +274,8 @@ class ConfigHelper():
 
     def get_string_list_if_exists(self, config_file, option_name):
         """Parses a comma-delimited list of strings into an actual list and strips
-        leading and trailing whitespace.  Don't verify anything, and
-        return an empty list if the option is empty or doesn't exist.
+        leading and trailing whitespace.  Don't verify anything, and return an empty list if
+        the option is empty or doesn't exist.
 
         config_file: The ConfigParser instance.
         option_name: The name of the option being retrieved.

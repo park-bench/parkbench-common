@@ -18,7 +18,7 @@
 """The project test runner.  To run the test suite, execute the following from the project
 root:
 
-python -m unittest discover --pattern=__init__.py
+python -m unittest
 """
 
 __author__ = 'Joel Luellwitz and Emily Frost'

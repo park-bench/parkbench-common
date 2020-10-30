@@ -24,6 +24,7 @@ import subprocess
 # This is easy to edit, just in case someone wants a disk measurable in terabytes.
 VALID_TMPFS_SIZE_SUFFIXES = ['K', 'k', 'M', 'm', 'G', 'g', '%']
 
+
 class RamdiskMountError(Exception):
     """Raised when a ramdisk mount operation fails."""
 
@@ -55,8 +56,8 @@ class Ramdisk:
           kibibytes, mebibytes, gibibytes, or percentage of physical RAM, respectively.
         uid: The system user ID that should own the mount directory.
         gid: The system group ID that should be associated with the mount directory.
-        mode: The mode of the mount directory access permissions. This should be a decimal
-          integer. ex: 511, not 777.
+        mode: The mode of the mount directory access permissions. This should be an integer,
+          not an octal string. ex: 511, not '777'.
           Note: This integer is most easily obtained by ORing the appropriate permission
           flags from the stat module.
         """
@@ -77,7 +78,7 @@ class Ramdisk:
 
             if not os.path.isdir(self.path):
                 raise RamdiskMountError(
-                    'Could not mount ramdisk on %s. Specified path does not exist.' % \
+                    'Could not mount ramdisk on %s. Specified path does not exist.' %
                     self.path)
 
             if not os.listdir(self.path) == []:
@@ -87,7 +88,6 @@ class Ramdisk:
                 ['mount', '-t', 'tmpfs', '-o', mount_options, 'none', self.path])
 
             if not self.is_mounted():
-                # TODO #16: Implement exception chaining when we move to Python 3.
                 raise RamdiskMountError(
                     'Could not mount ramdisk on %s. Mount return code was %s.' %
                     (self.path, return_code))
@@ -116,8 +116,8 @@ class Ramdisk:
         size_input: A string to be validated.
         """
         if not self._is_integer(size_input):
-            if not self._is_integer(size_input[:-1]) \
-               or not size_input[-1:] in VALID_TMPFS_SIZE_SUFFIXES:
+            if not self._is_integer(size_input[:-1]) or \
+                    not size_input[-1:] in VALID_TMPFS_SIZE_SUFFIXES:
 
                 message = 'The value %s for ramdisk mount option size is not ' \
                         'formatted correctly.' % size_input

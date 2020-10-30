@@ -2,11 +2,32 @@
 
 [General]
 
-int_30=30
-float_30point5=30.5
-
-int_1=1
-float_point5=0.5
-
-int_negative_12=-12
-float_negative_1point5=-1.5
+verify-string-exists=Of course I exist!
+verify-string-exists-blank=
+verify-password-exists=r00t
+verify-password-exists-blank=
+verify-number-exists=3.3
+verify-number-exists-not-number=l337
+verify-integer-exists=3
+verify-integer-exists-not-integer=3.3
+verify-number-within-range=3.3
+verify-number-within-range-range-edge=3.899999
+verify-number-within-range-not-number=l337
+verify-integer-within-range=3
+verify-integer-within-range-not-number=l337
+verify-integer-within-range-not-integer=3.3
+verify-valid-integer-in-list=3
+verify-valid-integer-in-list-not-integer=3.3
+verify-number-list-exists=-3,239,5
+verify-number-list-exists-not-number-list=-3,text,5
+verify-number-list-exists-one-number=-3
+get-string-list-if-exists=-3,text,239
+get-string-list-if-exists-one-string=text
+verify-string-list-exists=-3,text,239
+verify-string-list-exists-one-string=text
+verify-boolean-exists-true=true
+verify-boolean-exists-true-uppercase=TRUE
+verify-boolean-exists-false=false
+verify-boolean-exists-invalid=invalid
+get-string-if-exists=I exist!
+get-string-if-exists-blank=

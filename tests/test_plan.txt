@@ -1,0 +1,51 @@
+config_helper.py:
+* Verify unit tests pass.
+* Verify trace logging is working.
+  * Trace enabled.
+  * Trace disabled.
+
+ramdisk.py:
+* Raises RamdiskOptionError on invalid size.
+  * Complete garbage.
+  * Invalid suffix.
+* disk size valid with suffix.
+* disk size valid without suffix.
+* uid not an integer
+* uid is not a valid userId
+* gid not an integer
+* gid is not valid groupId
+* mode not an integer
+* mode is greater than o777
+* mode is less than 0
+* path is a file
+* path does not exist
+* warns that path is not empty
+* Ramdisk mounting fails
+
+broadcaster.py:
+* program directory has rwx--x--- permissions
+* program directory is owned by uid
+* program directory has a group of gid
+* broadcast directory has rwxr-x--- permissions
+* broadcast directory is owned by uid
+* broadcast directory has a group of gid
+* missing directories are created
+* nothing happens if directories already exist.
+* permissions are changed if directories already exist.
+* A broadcast is created in name---date---random format.
+* prior broadcasts of the same name are removed. (See issue 23.)
+* An exception is thrown when broadcast file cannot be created.
+* Broadcasts are logged at info level.
+
+broadcastconsumer.py:
+* broadcast path does not exist.
+* broadcast directory is empty.
+* broadcasts exist in directory that doesn't match broadcast name.
+* More than one broadcast exists with different times.
+* Broadcast time is greater than last time read.
+* Broadcast time is less than last time read.
+* Broadcast is ignored if it is from the future.
+  * Verify a warning is logged.
+* Broadcast rate limiting works.
+
+*** Left off considering why "if latest_broadcast_time > self.last_consumed_broadcast:" isn't in the 'else' expression as well.
