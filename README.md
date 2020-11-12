@@ -38,8 +38,8 @@ installing a Debian package. The rest of these instructions make the following a
 *   You are familiar with using a Linux terminal.
 *   You are somewhat familiar with using `debuild`.
 *   You are familiar with using `git` and GitHub.
-*   `debhelper`, `devscripts`, `dh-python`, `python-all`, and `python-setuptools` are
-    installed on your build server.
+*   `debhelper`, `devscripts`, `python3-all`, and `python3-setuptools` are installed on your
+    build server.
 *   You are familiar with GnuPG (for deb signing).
 
 ## Steps to Build and Install

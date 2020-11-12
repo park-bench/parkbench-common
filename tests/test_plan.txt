@@ -1,3 +1,5 @@
+* Can build following the instructions.
+
 config_helper.py:
 * Verify unit tests pass.
 * Verify trace logging is working.
