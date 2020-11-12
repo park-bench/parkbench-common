@@ -63,7 +63,7 @@ class BroadcastConsumer():
         """
         broadcast_updated = False
 
-        latest_broadcast_time = self._read_broadcast_time()
+        latest_broadcast_time = self._read_latest_broadcast_time()
 
         if latest_broadcast_time is not None:
             if latest_broadcast_time > datetime.datetime.now().isoformat():
@@ -86,15 +86,16 @@ class BroadcastConsumer():
                         'Updating last consumed broadcast time from %s to %s.',
                         self.last_consumed_broadcast, latest_broadcast_time)
                     broadcast_updated = True
+                    self.last_consumed_broadcast = latest_broadcast_time
                     self.next_check_time = time.time() + self.minimum_delay
 
         return broadcast_updated
 
-    def _read_broadcast_time(self):
-        """Retrieve the ISO formatted time from the most recent broadcast.
+    def _read_latest_broadcast_time(self):
+        """Retrieves the ISO formatted time from the most recent broadcast.
 
-        Returns a string containing an ISO formatted timestamp if a new broadcast file
-            exists. Otherwise, None is returned.
+        Returns a string containing an ISO formatted timestamp of the latest broadcast file.
+           If no broadcast file exists, None is returned.
         """
         broadcast_time = None
 
@@ -107,10 +108,6 @@ class BroadcastConsumer():
                     broadcast_times.append(read_broadcast_time)
 
             if broadcast_times:
-                current_broadcast_time = sorted(broadcast_times, reverse=True)[0]
-
-                if current_broadcast_time != self.last_read_broadcast:
-                    broadcast_time = current_broadcast_time
-                    self.last_read_broadcast = current_broadcast_time
+                broadcast_time = sorted(broadcast_times, reverse=True)[0]
 
         return broadcast_time

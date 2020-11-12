@@ -47,5 +47,12 @@ broadcastconsumer.py:
 * Broadcast is ignored if it is from the future.
   * Verify a warning is logged.
 * Broadcast rate limiting works.
-
-*** Left off considering why "if latest_broadcast_time > self.last_consumed_broadcast:" isn't in the 'else' expression as well.
+  * A value is added to the queue that warns about a broadcast issued during rate limiting.
+  * A value is added to the queue that does not warn about rate limiting (because it is older than the last consumed broadcast).
+* A broadcast is consumed if outside the rate limiting interval.
+  * Logs that broadcast has been consumed.
+* Returns the last broadcast if two broadcasts are in the queue at the same time.
+* Only returns broadcasts matching this broadcast name.
+* Broadcasts are ignored if directory does not exist.
+* Broadcasts are ignored if broadcast path is not a directory.
+* No broadcast file returns false.
