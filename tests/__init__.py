@@ -18,7 +18,7 @@
 """The project test runner.  To run the test suite, execute the following from the project
 root:
 
-python -m unittest
+python3 -m unittest
 """
 
 __author__ = 'Joel Luellwitz and Emily Frost'
