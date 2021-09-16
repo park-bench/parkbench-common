@@ -1,6 +1,5 @@
-#!/usr/bin/env python2
-
-# Copyright 2017-2018 Joel Allen Luellwitz and Emily Frost
+#!/usr/bin/python3
+# Copyright 2017-2021 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

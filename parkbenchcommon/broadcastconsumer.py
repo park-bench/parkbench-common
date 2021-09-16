@@ -48,7 +48,7 @@ class BroadcastConsumer():
         self.program_name = program_name
         self.broadcast_path = os.path.join(SPOOL_PATH, program_name, 'ramdisk', 'broadcast')
         self.last_consumed_broadcast = datetime.datetime.now().isoformat()
-        self.last_read_broadcast = datetime.datetime.now().isoformat()
+        self.first_future_broadcast_time = "9999"
         self.next_check_time = time.time()
         self.minimum_delay = minimum_delay
 
@@ -66,18 +66,12 @@ class BroadcastConsumer():
         latest_broadcast_time = self._read_latest_broadcast_time()
 
         if latest_broadcast_time is not None:
-            if latest_broadcast_time > datetime.datetime.now().isoformat():
-                self.logger.warning('Read a %s broadcast from %s from the future and ignored'
-                                    ' it. The reported time was %s.', self.broadcast_name,
-                                    self.program_name, latest_broadcast_time)
-
-            else:
+            if latest_broadcast_time > self.last_consumed_broadcast:
                 if self.next_check_time > time.time():
-                    if latest_broadcast_time > self.last_consumed_broadcast:
-                        self.logger.debug(
-                            'Read a %s broadcast from %s issued during the rate limiting '
-                            'delay and ignored it. The reported time was %s.',
-                            self.broadcast_name, self.program_name, latest_broadcast_time)
+                    self.logger.debug(
+                        'Read a %s broadcast from %s issued during the rate limiting delay '
+                        'and ignored it. The reported time was %s.',
+                        self.broadcast_name, self.program_name, latest_broadcast_time)
                 else:
                     self.logger.info(
                         'The broadcast %s from program %s has been consumed.',
@@ -86,8 +80,9 @@ class BroadcastConsumer():
                         'Updating last consumed broadcast time from %s to %s.',
                         self.last_consumed_broadcast, latest_broadcast_time)
                     broadcast_updated = True
-                    self.last_consumed_broadcast = latest_broadcast_time
                     self.next_check_time = time.time() + self.minimum_delay
+
+                self.last_consumed_broadcast = latest_broadcast_time
 
         return broadcast_updated
 
@@ -97,17 +92,26 @@ class BroadcastConsumer():
         Returns a string containing an ISO formatted timestamp of the latest broadcast file.
            If no broadcast file exists, None is returned.
         """
-        broadcast_time = None
+        latest_broadcast_time = None
 
         if os.path.isdir(self.broadcast_path):
             file_list = os.listdir(self.broadcast_path)
-            broadcast_times = []
-            for filename in file_list:
+            for filename in sorted(file_list, reverse=True):
                 (read_broadcast_name, read_broadcast_time, _) = filename.split('---')
                 if read_broadcast_name == self.broadcast_name:
-                    broadcast_times.append(read_broadcast_time)
+                    # Allow for up to one second of clock correction due to NTP updates.
+                    now_plus_one_second = (datetime.datetime.now() +
+                                           datetime.timedelta(seconds=1)).isoformat()
+                    if read_broadcast_time <= now_plus_one_second:
+                        latest_broadcast_time = read_broadcast_time
+                        break
+                    else:
+                        if read_broadcast_time < self.first_future_broadcast_time or \
+                                self.first_future_broadcast_time < now_plus_one_second:
+                            self.first_future_broadcast_time = read_broadcast_time
+                            self.logger.warning(
+                                'Read a %s broadcast from %s from the future and ignored '
+                                'it. The reported time was %s.',
+                                self.broadcast_name, self.program_name, read_broadcast_time)
 
-            if broadcast_times:
-                broadcast_time = sorted(broadcast_times, reverse=True)[0]
-
-        return broadcast_time
+        return latest_broadcast_time
