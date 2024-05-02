@@ -48,6 +48,7 @@ broadcastconsumer.py:
 * Broadcast time is less than last time read.
 * Broadcast is ignored if it is from the future.
   * Verify a warning is logged.
+  * Always logs the closest future broadcast as future broadcasts fall into the past or new future broadcasts are added.
 * Broadcast rate limiting works.
   * A value is added to the queue that warns about a broadcast issued during rate limiting.
   * A value is added to the queue that does not warn about rate limiting (because it is older than the last consumed broadcast).
