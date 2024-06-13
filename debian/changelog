@@ -1,4 +1,4 @@
-parkbench-common (0.8) UNRELEASED; urgency=medium
+parkbench-common (0.8) stable; urgency=medium
 
   [ Emily Frost ]
   * Bumped version number to match compatible libraries in project.
@@ -7,7 +7,7 @@ parkbench-common (0.8) UNRELEASED; urgency=medium
   * Changed package name to parkbench-common.
   * Switched to Python 3.
 
- -- Emily Frost <emfrost@posteo.net>  Mon, 27 Nov 2017 20:29:56 -0600
+ -- Emily Frost <emfrost@posteo.net>  Thu, 13 Jun 2024 14:06:00 -0500
 
 confighelper (0.3) stable; urgency=low
 
