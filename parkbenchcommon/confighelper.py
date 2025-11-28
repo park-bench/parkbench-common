@@ -1,4 +1,4 @@
-# Copyright 2015-2020 Joel Allen Luellwitz and Emily Frost
+# Copyright 2015-2025 Joel Allen Luellwitz and Emily Frost
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" confighelper.confighelper helps read and validate options from a ConfigParser object."""
+"""confighelper.confighelper helps read and validate options from a ConfigParser object."""
 
 __all__ = ['ConfigHelper', 'ValidationException']
 __author__ = 'Joel Luellwitz and Emily Frost'
-__version__ = '0.8'
+__version__ = '0.9'
 
 import logging
 import logging.config
@@ -29,6 +29,7 @@ OPTION_LABEL = 'Option %s: %s'
 OPTION_MISSING_ERROR_MESSAGE = 'Option %s not found.'
 
 
+# TODO: Try moving back into the class.
 def _trace(self, message, *args, **kwargs):
     """Trace is defined here because being in another class breaks references to self.
 
@@ -62,29 +63,23 @@ class ConfigHelper():
 
         return self.logger.handlers[0].stream.fileno()
 
-    def configure_logger(self, log_file, log_level):
-        """Applies the configuration defined in _get_logger_config and adds a trace
-        log level.  This should be run as soon as the log level is known.
-
-        log_file: The pathname of the file to log to.
-        log_level: Indicates the verbosity of the logging. Valid levels are TRACE, DEBUG,
-            INFO, WARNING, ERROR, and CRITICAL.
-        """
+    def configure_logger(self):
+        """Applies the configuration defined in _get_logger_config and adds a trace log level."""
 
         # Make it all uppercase because none of the other config file options
         #   have to be uppercase.
-        log_level = log_level.upper()
+        # TODO: Move this somewhere: log_level = log_level.upper()
 
         # Add a trace method to the Logger class
         logging.addLevelName(TRACE_LEVEL_NUMBER, 'TRACE')
         logging.Logger.trace = _trace
 
-        logging_config = self._get_logger_config(log_file, log_level)
+        logging_config = self._get_logger_config()
         logging.config.dictConfig(logging_config)
 
     def verify_string_exists(self, config_file, option_name):
-        """Verifies an option exists in the application configuration file.  This method
-        assumes a logger has been instantiated.
+        """Verifies an option exists in the application configuration file.  This method assumes a
+        logger has been instantiated.
 
         config_file: The ConfigParser instance.
         option_name: The name of the option being retrieved.
@@ -378,12 +373,8 @@ class ConfigHelper():
         return option_value
 
     # TODO: Eventually, look into adding log rotation to our logging config. (issue 4)
-    def _get_logger_config(self, log_file, log_level):
-        """Returns a dict that defines the logging options we like:
-        The informative formatter.
-        A stdout handler.
-        A file handler.
-        """
+    def _get_logger_config(self):
+        """Returns a dict that defines the logging options for all Parkbench programs."""
 
         logger_config = {
             'version': 1,
@@ -396,20 +387,12 @@ class ConfigHelper():
                 'console': {
                     'class': 'logging.StreamHandler',
                     'formatter': 'default',
-                    'stream': sys.stdout,
-                    'level': log_level
+                    'stream': sys.stderr,
                 },
-                'file': {
-                    'class': 'logging.FileHandler',
-                    'formatter': 'default',
-                    'filename': log_file,
-                    'level': log_level
-                }
             },
             'loggers': {
-                '': {
-                    'handlers': ['file', 'console'],
-                    'level': log_level
+                '': {  # No typo.
+                    'handlers': ['console'],
                 }
             }
         }
