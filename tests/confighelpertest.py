@@ -31,6 +31,7 @@ from unittest.mock import MagicMock
 CONFIG_FILE_PATH = './tests/data/config.txt'
 
 
+# TODO: Add tests for new methods.
 class ConfigHelperTest(unittest.TestCase):
     "Tests the ConfigHelper class."
 
@@ -43,13 +44,8 @@ class ConfigHelperTest(unittest.TestCase):
         self.logger = MagicMock()
         logging.getLogger = MagicMock(return_value=self.logger)
 
-        log_file = '/dev/null'
-        log_level = 'trace'
         self.config_helper = confighelper.ConfigHelper()
-        self.config_helper.configure_logger(log_file, log_level)
-
-    def test_get_log_file_handle_code_coverage(self):
-        result = self.config_helper.get_log_file_handle()
+        self.config_helper.configure_logger()
 
     def test_verify_string_exists_when_string_exists(self):
         name = 'verify-string-exists'

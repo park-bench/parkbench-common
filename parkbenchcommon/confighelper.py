@@ -46,9 +46,11 @@ class ValidationException(Exception):
     """Indicates that configuration validation has failed."""
 
 
+# TODO: Eventually add a verify_string_list method. (gpgmailer issue 20)
 class ConfigHelper():
     """Contains methods to help parse and validate ConfigParser configuration files."""
 
+    # TODO: Move config_parser to the constructor?
     def __init__(self):
         # This is one reason why this library is specific to our projects.  Our configuration
         #   files currently just have one section.
@@ -56,27 +58,33 @@ class ConfigHelper():
 
         self.logger = logging.getLogger()
 
-    def get_log_file_handle(self):
-        """Returns the file handler for the log file.  Mostly used for preserving file
-        descriptors upon daemonization.
+    @staticmethod
+    def configure_logger():
+        """Applies the configuration defined in _get_logger_config and adds a trace log
+        level.
         """
-
-        return self.logger.handlers[0].stream.fileno()
-
-    def configure_logger(self):
-        """Applies the configuration defined in _get_logger_config and adds a trace log level."""
-
-        # Make it all uppercase because none of the other config file options
-        #   have to be uppercase.
-        # TODO: Move this somewhere: log_level = log_level.upper()
-
         # Add a trace method to the Logger class
         logging.addLevelName(TRACE_LEVEL_NUMBER, 'TRACE')
         logging.Logger.trace = _trace
 
-        logging_config = self._get_logger_config()
+        logging_config = ConfigHelper._get_logger_config()
         logging.config.dictConfig(logging_config)
 
+    def verify_log_level(self, config_parser):
+        """TODO: Document. Mention how the option name is assumed to be 'log_level'."""
+
+        # Make it uppercase because none of the other config file options have to be
+        #   uppercase.
+        string_value = self.verify_string_exists(config_parser, 'log_level').upper()
+
+        if string_value not in ('CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'TRACE'):
+            message = '%s is not a valid value for %s.' % (string_value, 'log_level')
+            self.logger.error(message)
+            raise ValidationException(message)
+
+        return string_value
+
+    # TODO: Rename config_file to config_parser in all methods.
     def verify_string_exists(self, config_file, option_name):
         """Verifies an option exists in the application configuration file.  This method assumes a
         logger has been instantiated.
@@ -230,7 +238,6 @@ class ConfigHelper():
         Returns the option value as a number.
         """
 
-        self.logger.debug('Verifying integer option %s.', option_name)
         int_value = self.verify_integer_exists(config_file, option_name)
 
         if int_value not in valid_options:
@@ -373,7 +380,8 @@ class ConfigHelper():
         return option_value
 
     # TODO: Eventually, look into adding log rotation to our logging config. (issue 4)
-    def _get_logger_config(self):
+    @staticmethod
+    def _get_logger_config():
         """Returns a dict that defines the logging options for all Parkbench programs."""
 
         logger_config = {
